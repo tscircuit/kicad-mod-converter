@@ -1,0 +1,27 @@
+{
+  "name": "kicad-mod-converter",
+  "version": "1.0.0",
+  "description": "Convert kicad mod file into JSON",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test:pull-kicad-footprints": "git clone --depth 1 https://gitlab.com/kicad/libraries/kicad-footprints.git",
+    "test": "ava"
+  },
+  "keywords": [
+    "kicad",
+    "json",
+    "converter",
+    "electronics"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "1.7.3",
+    "@types/node": "^20.12.12",
+    "ava": "^6.1.3",
+    "esbuild": "^0.21.4",
+    "esbuild-register": "^3.5.0",
+    "tsup": "^8.0.2"
+  }
+}
