@@ -26,6 +26,8 @@ export const convertKicadJsonToTsCircuitSoup = async (
           .setSize(pad.size[0], pad.size[1])
       )
     }
+    for (const fp_line of fp_lines) {
+    }
   })
 
   const soup = await pb.build()
