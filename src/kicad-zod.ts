@@ -22,6 +22,8 @@ export const property_def = z.object({
 
 export const pad_def = z.object({
   name: z.string(),
+  pad_type: z.literal("smd"),
+  pad_shape: z.literal("roundrect"),
   at: point,
   size: point2,
   layers: z.array(z.string()).optional(),
@@ -29,11 +31,40 @@ export const pad_def = z.object({
   uuid: z.string().optional(),
 })
 
+export const effects_def = z
+  .object({
+    font: z.object({
+      size: point2,
+      thickness: z.number().optional(),
+    }),
+  })
+  .partial()
+
+export const fp_text_def = z.object({
+  fp_text_type: z.literal("user"),
+  text: z.string(),
+  at: point,
+  layer: z.string(),
+  uuid: z.string(),
+  effects: effects_def.partial(),
+})
+
+export const fp_line = z.object({
+  start: point2,
+  end: point2,
+  stroke: z.object({
+    width: z.number(),
+    type: z.string(),
+  }),
+  layer: z.string(),
+  uuid: z.string(),
+})
+
 export const kicad_mod_json_def = z.object({
   footprint_name: z.string(),
-  pad_type: z.literal("smd"),
-  pad_shape: z.literal("roundrect"),
   properties: z.array(property_def),
+  fp_lines: z.array(fp_line),
+  fp_texts: z.array(fp_text_def),
   pads: z.array(pad_def),
 })
 
@@ -43,4 +74,7 @@ export type Point = z.infer<typeof point>
 export type Attributes = z.infer<typeof attributes_def>
 export type Property = z.infer<typeof property_def>
 export type Pad = z.infer<typeof pad_def>
+export type EffectsObj = z.infer<typeof effects_def>
+export type FpText = z.infer<typeof fp_text_def>
+export type FpLine = z.infer<typeof fp_line>
 export type KicadModJson = z.infer<typeof kicad_mod_json_def>

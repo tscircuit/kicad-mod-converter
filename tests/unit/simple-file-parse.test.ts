@@ -89,8 +89,9 @@ const exampleFile = `
 
 test("simple file parse", async (t) => {
   const fixture = await getTestFixture(t)
-
   const result = parseKicadMod(exampleFile)
 
-  console.log(result)
+  t.is(result.pads.length, 1)
+  t.is(result.fp_texts.length, 1)
+  t.is(result.fp_lines.length, 1)
 })
