@@ -1,28 +1,21 @@
 import parseSExpression from "s-expression"
-
-interface Attributes {
-  at?: [number, number] | [number, number, number]
-  size?: [number, number]
-  layers?: string[]
-  roundrect_rratio?: number
-  uuid?: string
-}
-
-interface Property {
-  key: string
-  val: string
-  attrs: Attributes
-}
-
-interface Pad extends Attributes {
-  name: string
-}
+import {
+  attributes_def,
+  kicad_mod_json_def,
+  pad_def,
+  type KicadModJson,
+  type Pad,
+  type Property,
+} from "./kicad-zod"
 
 export const formatAttr = (val: any, attrKey: string) => {
   if (attrKey === "at" || attrKey === "size") {
     return val.map((n: any) => Number.parseFloat(n.valueOf()))
   }
   if (val.length === 2) {
+    return val.valueOf()
+  }
+  if (attrKey === "uuid") {
     return val.valueOf()
   }
   if (!Number.isNaN(Number.parseFloat(val))) {
@@ -42,7 +35,7 @@ export const getAttr = (s: Array<any>, key: string) => {
   }
 }
 
-export const parseKicadMod = (fileContent: string) => {
+export const parseKicadMod = (fileContent: string): KicadModJson => {
   const kicadSExpr = parseSExpression(fileContent)
 
   // const footp = kicadSExpr[0]
@@ -54,16 +47,18 @@ export const parseKicadMod = (fileContent: string) => {
     .map((row: any) => {
       const key = row[1].valueOf()
       const val = row[2].valueOf()
-      const attrs = row.slice(3).reduce((acc: any, attrAr: any[]) => {
-        const attrKey = attrAr[0].valueOf()
-        acc[attrKey] = formatAttr(attrAr.slice(1), attrKey)
-        return acc
-      }, {} as any)
+      const attributes = attributes_def.parse(
+        row.slice(3).reduce((acc: any, attrAr: any[]) => {
+          const attrKey = attrAr[0].valueOf()
+          acc[attrKey] = formatAttr(attrAr.slice(1), attrKey)
+          return acc
+        }, {} as any)
+      )
 
       return {
         key,
         val,
-        attrs,
+        attributes,
       } as Property
     })
 
@@ -77,17 +72,23 @@ export const parseKicadMod = (fileContent: string) => {
     const layers = getAttr(row, "layers")
     const roundrect_rratio = getAttr(row, "roundrect_rratio")
     const uuid = getAttr(row, "uuid")
-    pads.push({
-      name: row[1].valueOf(),
-      at,
-      size,
-      layers,
-      roundrect_rratio,
-      uuid,
-    })
+    pads.push(
+      pad_def.parse({
+        name: row[1].valueOf(),
+        pad_type: row[2].valueOf(),
+        pad_shape: row[3].valueOf(),
+        at,
+        size,
+        layers,
+        roundrect_rratio,
+        uuid,
+      })
+    )
   }
 
-  console.log(pads)
-
-  // console.log(kicadSExpr)
+  return kicad_mod_json_def.parse({
+    footprint_name: footprintName,
+    properties,
+    pads,
+  })
 }
