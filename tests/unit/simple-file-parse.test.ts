@@ -1,5 +1,5 @@
 import test from "ava"
-import { parseKicadMod } from "src"
+import { parseKicadModToKicadJson } from "src/parse-kicad-mod-to-kicad-json"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 const exampleFile = `
@@ -89,7 +89,7 @@ const exampleFile = `
 
 test("simple file parse", async (t) => {
   const fixture = await getTestFixture(t)
-  const result = parseKicadMod(exampleFile)
+  const result = parseKicadModToKicadJson(exampleFile)
 
   t.is(result.pads.length, 1)
   t.is(result.fp_texts.length, 1)
