@@ -62,6 +62,12 @@ export const fp_line = z.object({
 
 export const kicad_mod_json_def = z.object({
   footprint_name: z.string(),
+  version: z.string(),
+  generator: z.string(),
+  generator_version: z.string(),
+  layer: z.string(),
+  descr: z.string(),
+  tags: z.array(z.string()),
   properties: z.array(property_def),
   fp_lines: z.array(fp_line),
   fp_texts: z.array(fp_text_def),

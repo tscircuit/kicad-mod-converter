@@ -51,6 +51,12 @@ export const formatAttr = (val: any, attrKey: string) => {
   ) {
     return val.map((n: any) => Number.parseFloat(n.valueOf()))
   }
+  if (attrKey === "tags") {
+    return val.map((n: any) => n.valueOf())
+  }
+  if (attrKey === "generator_version" || attrKey === "version") {
+    return val[0].valueOf()
+  }
   if (val.length === 2) {
     return val.valueOf()
   }
@@ -83,8 +89,23 @@ export const getAttr = (s: Array<any>, key: string) => {
 export const parseKicadMod = (fileContent: string): KicadModJson => {
   const kicadSExpr = parseSExpression(fileContent)
 
-  // const footp = kicadSExpr[0]
   const footprintName = kicadSExpr[1].valueOf()
+
+  const topLevelAttributes: any = {}
+
+  const simpleTopLevelAttributes = Object.entries(kicad_mod_json_def.shape)
+    .filter(
+      ([attributeKey, def]) =>
+        def._def.typeName === "ZodString" || attributeKey === "tags"
+    )
+    .map(([attributeKey]) => attributeKey)
+  for (const kicadSExprRow of kicadSExpr.slice(2)) {
+    if (!simpleTopLevelAttributes.includes(kicadSExprRow[0])) continue
+
+    const key = kicadSExprRow[0].valueOf()
+    const val = formatAttr(kicadSExprRow.slice(1), key)
+    topLevelAttributes[key] = val
+  }
 
   const properties = kicadSExpr
     .slice(2)
@@ -178,6 +199,7 @@ export const parseKicadMod = (fileContent: string): KicadModJson => {
 
   return kicad_mod_json_def.parse({
     footprint_name: footprintName,
+    ...topLevelAttributes,
     properties,
     fp_lines,
     fp_texts,
