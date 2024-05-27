@@ -12,15 +12,18 @@ export const convertKicadJsonToTsCircuitSoup = async (
   pb.add("component", (cb) => {
     for (const pad of pads) {
       cb.footprint.add("smtpad", (pb) =>
-        pb.setProps({
-          x: pad.at[0],
-          y: pad.at[1],
-          width: pad.size[0],
-          height: pad.size[1],
-          layer: pad.layers?.[0]! as any,
-          shape: "rect",
-          port_hints: [pad.name],
-        })
+        pb
+          .setProps({
+            x: pad.at[0],
+            y: pad.at[1],
+            // ??? @tscircuit/builder bug? width and height are not recognized
+            width: pad.size[0],
+            height: pad.size[1],
+            layer: pad.layers?.[0]! as any,
+            shape: "rect",
+            port_hints: [pad.name],
+          })
+          .setSize(pad.size[0], pad.size[1])
       )
     }
   })
