@@ -56,7 +56,7 @@ export const convertKicadJsonToTsCircuitSoup = async (
               { x: fp_line.start[0], y: fp_line.start[1] },
               { x: fp_line.end[0], y: fp_line.end[1] },
             ],
-            layer: convertKicadLayerToTscircuitLayer(fp_line.layer),
+            layer: "top", //convertKicadLayerToTscircuitLayer(fp_line.layer),
             pcbX: 0,
             pcbY: 0,
           })
