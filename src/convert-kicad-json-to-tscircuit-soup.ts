@@ -2,6 +2,15 @@ import type { KicadModJson } from "./kicad-zod"
 import type { AnySoupElement } from "@tscircuit/soup"
 import { createProjectBuilder } from "@tscircuit/builder"
 
+export const convertKicadLayerToTscircuitLayer = (kicadLayer: string) => {
+  switch (kicadLayer) {
+    case "F.Cu":
+      return "top"
+    case "B.Cu":
+      return "bottom"
+  }
+}
+
 export const convertKicadJsonToTsCircuitSoup = async (
   kicadJson: KicadModJson
 ): Promise<AnySoupElement[]> => {
@@ -27,6 +36,16 @@ export const convertKicadJsonToTsCircuitSoup = async (
       )
     }
     for (const fp_line of fp_lines) {
+      cb.footprint.add("pcbtrace", (pb) =>
+        pb.setProps({
+          route: [
+            { x: fp_line.start[0], y: fp_line.start[1] },
+            { x: fp_line.end[0], y: fp_line.end[1] },
+          ],
+          layer: convertKicadLayerToTscircuitLayer(fp_line.layer),
+          thickness: fp_line.stroke.width,
+        })
+      )
     }
   })
 
