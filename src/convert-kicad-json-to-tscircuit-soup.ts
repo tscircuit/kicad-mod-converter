@@ -5,8 +5,10 @@ import { createProjectBuilder } from "@tscircuit/builder"
 export const convertKicadLayerToTscircuitLayer = (kicadLayer: string) => {
   switch (kicadLayer) {
     case "F.Cu":
+    case "F.SilkS":
       return "top"
     case "B.Cu":
+    case "B.SilkS":
       return "bottom"
   }
 }
@@ -36,16 +38,32 @@ export const convertKicadJsonToTsCircuitSoup = async (
       )
     }
     for (const fp_line of fp_lines) {
-      cb.footprint.add("pcbtrace", (pb) =>
-        pb.setProps({
-          route: [
-            { x: fp_line.start[0], y: fp_line.start[1] },
-            { x: fp_line.end[0], y: fp_line.end[1] },
-          ],
-          layer: convertKicadLayerToTscircuitLayer(fp_line.layer),
-          thickness: fp_line.stroke.width,
-        })
-      )
+      if (fp_line.layer === "F.Cu") {
+        cb.footprint.add("pcbtrace", (pb) =>
+          pb.setProps({
+            route: [
+              { x: fp_line.start[0], y: fp_line.start[1] },
+              { x: fp_line.end[0], y: fp_line.end[1] },
+            ],
+            layer: convertKicadLayerToTscircuitLayer(fp_line.layer),
+            thickness: fp_line.stroke.width,
+          })
+        )
+      } else if (fp_line.layer === "F.SilkS") {
+        cb.footprint.add("silkscreenpath", (lb) =>
+          lb.setProps({
+            route: [
+              { x: fp_line.start[0], y: fp_line.start[1] },
+              { x: fp_line.end[0], y: fp_line.end[1] },
+            ],
+            layer: convertKicadLayerToTscircuitLayer(fp_line.layer),
+            pcbX: 0,
+            pcbY: 0,
+          })
+        )
+      } else {
+        console.log("Unhandled layer for fp_line", fp_line.layer)
+      }
     }
   })
 
