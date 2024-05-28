@@ -23,7 +23,7 @@ export const property_def = z.object({
 export const pad_def = z.object({
   name: z.string(),
   pad_type: z.literal("smd"),
-  pad_shape: z.literal("roundrect"),
+  pad_shape: z.enum(["roundrect", "circle"]),
   at: point,
   size: point2,
   layers: z.array(z.string()).optional(),
