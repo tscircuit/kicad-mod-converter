@@ -1,6 +1,6 @@
 {
-  "name": "kicad-mod-converter",
-  "version": "1.0.0",
+  "name": "@tscircuit/kicad-mod-converter",
+  "version": "0.0.1",
   "description": "Convert kicad mod file into JSON",
   "type": "module",
   "main": "index.js",
