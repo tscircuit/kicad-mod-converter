@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test:pull-kicad-footprints": "git clone --depth 1 https://gitlab.com/kicad/libraries/kicad-footprints.git",
-    "test": "ava"
+    "test": "ava",
+    "build": "tsup ./src/index.ts --dts --sourcemap"
   },
   "keywords": [
     "kicad",
