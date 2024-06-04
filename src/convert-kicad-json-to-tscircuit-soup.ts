@@ -1,6 +1,9 @@
 import type { KicadModJson } from "./kicad-zod"
 import type { AnySoupElement } from "@tscircuit/soup"
 import { createProjectBuilder } from "@tscircuit/builder"
+import Debug from "debug"
+
+const debug = Debug("kicad-mod-converter")
 
 export const convertKicadLayerToTscircuitLayer = (kicadLayer: string) => {
   switch (kicadLayer) {
@@ -57,12 +60,10 @@ export const convertKicadJsonToTsCircuitSoup = async (
               { x: fp_line.end[0], y: fp_line.end[1] },
             ],
             layer: "top", //convertKicadLayerToTscircuitLayer(fp_line.layer),
-            pcbX: 0,
-            pcbY: 0,
           })
         )
       } else {
-        console.log("Unhandled layer for fp_line", fp_line.layer)
+        debug("Unhandled layer for fp_line", fp_line.layer)
       }
     }
   })

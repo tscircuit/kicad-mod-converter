@@ -6,15 +6,16 @@ import { join } from "node:path"
 import { logSoup } from "@tscircuit/log-soup"
 import type { AnySoupElement } from "@tscircuit/soup"
 
+const cache: any = {}
+
+const kicadDir = "kicad-footprints"
+
 export const getTestFixture = (t: ExecutionContext) => {
   return {
-    getKicadFile: (fname: KicadFileName) => {
-      // Read kicad directory, find a file path that ends with
-      // the provided file name
-      const kicadDir = "kicad-footprints"
+    getAllKicadFiles() {
+      if (cache.kicadFileList) return cache.kicadFileList as string[]
 
       // Each kicad file is nested, i.e. kicad-footprints/*.pretty/*.kicad_mod
-
       const files = readdirSync(kicadDir, { withFileTypes: true }).flatMap(
         (dirent) => {
           if (dirent.isDirectory() && dirent.name.endsWith(".pretty")) {
@@ -26,11 +27,18 @@ export const getTestFixture = (t: ExecutionContext) => {
           return []
         }
       )
+      cache.kicadFileList = files
+      return files
+    },
 
+    getKicadFilePath(fname: KicadFileName) {
+      const files = this.getAllKicadFiles()
       const filePath = files.find((file) => file.endsWith(fname))
-      const path = join(kicadDir, filePath!)
+      return join(kicadDir, filePath!)
+    },
 
-      return readFileSync(path, "utf-8")
+    getKicadFile(fname: KicadFileName) {
+      return readFileSync(this.getKicadFilePath(fname), "utf-8")
     },
 
     logSoup: async (soup: AnySoupElement[]) => {
