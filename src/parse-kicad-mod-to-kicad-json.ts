@@ -63,7 +63,15 @@ export const parseKicadModToKicadJson = (fileContent: string): KicadModJson => {
   for (const row of padRows) {
     const at = getAttr(row, "at")
     const size = getAttr(row, "size")
-    const layers = getAttr(row, "layers").map((l: string) => l.toString())
+    let layers = getAttr(row, "layers")
+    if (Array.isArray(layers)) {
+      layers = layers.map((layer) => layer.valueOf())
+    } else if (typeof layers === "string") {
+      layers = [layers]
+    } else if (!layers) {
+      layers = []
+    }
+
     const roundrect_rratio = getAttr(row, "roundrect_rratio")
     const uuid = getAttr(row, "uuid")
     const padRaw = {

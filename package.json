@@ -8,7 +8,7 @@
     "test:pull-kicad-footprints": "git clone --depth 1 https://gitlab.com/kicad/libraries/kicad-footprints.git",
     "test": "ava",
     "build": "tsup ./src/index.ts --dts --sourcemap",
-    "benchmark": "RUN_BENCHMARK=1 npx ava --color -T 2m ./tests/kicad-file-tests/benchmark.test.ts"
+    "benchmark": "DEBUG='' RUN_BENCHMARK=1 npx ava --color -T 2m ./tests/kicad-file-tests/benchmark.test.ts"
   },
   "files": [
     "dist"
