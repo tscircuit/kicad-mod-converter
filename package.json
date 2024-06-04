@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "description": "Convert kicad mod file into JSON",
   "type": "module",
-  "main": "index.js",
+  "main": "dist/index.cjs",
   "scripts": {
     "test:pull-kicad-footprints": "git clone --depth 1 https://gitlab.com/kicad/libraries/kicad-footprints.git",
     "test": "ava",
