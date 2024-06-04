@@ -72,7 +72,7 @@ export const fp_text_def = z.object({
   text: z.string(),
   at: point,
   layer: z.string(),
-  uuid: z.string(),
+  uuid: z.string().optional(),
   effects: effects_def.partial(),
 })
 
@@ -84,17 +84,17 @@ export const fp_line = z.object({
     type: z.string(),
   }),
   layer: z.string(),
-  uuid: z.string(),
+  uuid: z.string().optional(),
 })
 
 export const kicad_mod_json_def = z.object({
   footprint_name: z.string(),
   version: z.string(),
   generator: z.string(),
-  generator_version: z.string(),
+  generator_version: z.string().optional(),
   layer: z.string(),
-  descr: z.string(),
-  tags: z.array(z.string()),
+  descr: z.string().default(""),
+  tags: z.array(z.string()).optional(),
   properties: z.array(property_def),
   fp_lines: z.array(fp_line),
   fp_texts: z.array(fp_text_def),

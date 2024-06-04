@@ -55,5 +55,5 @@ test("benchmark: read_without_error", async (t) => {
     console.log(kleur.red(fixture.getKicadFilePath(failingFile as any)))
   }
 
-  t.pass() // todo must hit a minimum score (like a snapshot)
+  t.is(failing.length, 0)
 })

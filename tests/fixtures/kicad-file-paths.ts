@@ -1,4 +1,5 @@
 export const kicadFilePaths = [
+  "IDC-Header_2x09_P2.54mm_Horizontal.kicad_mod",
   "BatteryHolder_Keystone_2468_2xAAA.kicad_mod",
   "Reverb_BTDR-1H.kicad_mod",
   "Balun_Johanson_1.6x0.8mm.kicad_mod",
