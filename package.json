@@ -9,6 +9,9 @@
     "test": "ava",
     "build": "tsup ./src/index.ts --dts --sourcemap"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "kicad",
     "json",
