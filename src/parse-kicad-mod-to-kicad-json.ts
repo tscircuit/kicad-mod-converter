@@ -10,6 +10,9 @@ import {
   type Property,
 } from "./kicad-zod"
 import { formatAttr, getAttr } from "./get-attr"
+import Debug from "debug"
+
+const debug = Debug("kicad-mod-converter")
 
 export const parseKicadModToKicadJson = (fileContent: string): KicadModJson => {
   const kicadSExpr = parseSExpression(fileContent)
@@ -60,21 +63,22 @@ export const parseKicadModToKicadJson = (fileContent: string): KicadModJson => {
   for (const row of padRows) {
     const at = getAttr(row, "at")
     const size = getAttr(row, "size")
-    const layers = getAttr(row, "layers")
+    const layers = getAttr(row, "layers").map((l: string) => l.toString())
     const roundrect_rratio = getAttr(row, "roundrect_rratio")
     const uuid = getAttr(row, "uuid")
-    pads.push(
-      pad_def.parse({
-        name: row[1].valueOf(),
-        pad_type: row[2].valueOf(),
-        pad_shape: row[3].valueOf(),
-        at,
-        size,
-        layers,
-        roundrect_rratio,
-        uuid,
-      })
-    )
+    const padRaw = {
+      name: row[1].valueOf(),
+      pad_type: row[2].valueOf(),
+      pad_shape: row[3].valueOf(),
+      at,
+      size,
+      layers,
+      roundrect_rratio,
+      uuid,
+    }
+
+    debug(`attempting to parse pad: ${JSON.stringify(padRaw, null, "  ")}`)
+    pads.push(pad_def.parse(padRaw))
   }
 
   const fp_texts_rows = kicadSExpr

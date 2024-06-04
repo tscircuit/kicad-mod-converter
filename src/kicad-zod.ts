@@ -39,11 +39,13 @@ export const pad_def = z.object({
   solder_paste_margin: z.number().optional(),
   solder_paste_margin_ratio: z.number().optional(),
   clearance: z.number().optional(),
-  zone_connection: z.union([
-    z.literal("0").describe("Pad is not connect to zone"),
-    z.literal("1").describe("Pad is connected to zone using thermal relief"),
-    z.literal("2").describe("Pad is connected to zone using solid fill"),
-  ]),
+  zone_connection: z
+    .union([
+      z.literal(0).describe("Pad is not connect to zone"),
+      z.literal(1).describe("Pad is connected to zone using thermal relief"),
+      z.literal(2).describe("Pad is connected to zone using solid fill"),
+    ])
+    .optional(),
   thermal_width: z.number().optional(),
   thermal_gap: z.number().optional(),
   uuid: z.string().optional(),
