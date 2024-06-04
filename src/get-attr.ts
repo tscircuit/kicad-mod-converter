@@ -54,7 +54,7 @@ export const formatAttr = (val: any, attrKey: string) => {
     }
     return val.valueOf()
   }
-  if (!Number.isNaN(Number.parseFloat(val))) {
+  if (/^[\d\.]+$/.test(val) && !Number.isNaN(Number.parseFloat(val))) {
     return Number.parseFloat(val)
   }
   if (Array.isArray(val) && val.length === 1) {
