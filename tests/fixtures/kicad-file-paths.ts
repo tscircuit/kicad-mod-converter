@@ -1,4 +1,5 @@
 export const kicadFilePaths = [
+  "Reverb_BTDR-1H.kicad_mod",
   "Balun_Johanson_1.6x0.8mm.kicad_mod",
   "Balun_Johanson_0900PC15J0013.kicad_mod",
   "Anaren_0805_2012Metric-6.kicad_mod",

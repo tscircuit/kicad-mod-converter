@@ -22,13 +22,38 @@ export const property_def = z.object({
 
 export const pad_def = z.object({
   name: z.string(),
-  pad_type: z.literal("smd"),
-  pad_shape: z.enum(["roundrect", "circle", "rect"]),
+  pad_type: z.enum(["thru_hole", "smd", "np_thru_hole", "connect"]),
+  pad_shape: z.enum([
+    "roundrect",
+    "circle",
+    "rect",
+    "oval",
+    "trapezoid",
+    "custom",
+  ]),
   at: point,
   size: point2,
   layers: z.array(z.string()).optional(),
   roundrect_rratio: z.number().optional(),
+  chamfer_ratio: z.number().optional(),
+  solder_paste_margin: z.number().optional(),
+  solder_paste_margin_ratio: z.number().optional(),
+  clearance: z.number().optional(),
+  zone_connection: z.union([
+    z.literal("0").describe("Pad is not connect to zone"),
+    z.literal("1").describe("Pad is connected to zone using thermal relief"),
+    z.literal("2").describe("Pad is connected to zone using solid fill"),
+  ]),
+  thermal_width: z.number().optional(),
+  thermal_gap: z.number().optional(),
   uuid: z.string().optional(),
+})
+
+export const drill_def = z.object({
+  oval: z.boolean().default(false),
+  diameter: z.number(),
+  width: z.number().optional(),
+  offset: point2.optional(),
 })
 
 export const effects_def = z
