@@ -8,9 +8,11 @@ const debug = Debug("kicad-mod-converter")
 export const convertKicadLayerToTscircuitLayer = (kicadLayer: string) => {
   switch (kicadLayer) {
     case "F.Cu":
+    case "F.Fab":
     case "F.SilkS":
       return "top"
     case "B.Cu":
+    case "B.Fab":
     case "B.SilkS":
       return "bottom"
   }
@@ -65,6 +67,21 @@ export const convertKicadJsonToTsCircuitSoup = async (
       } else {
         debug("Unhandled layer for fp_line", fp_line.layer)
       }
+    }
+
+    for (const fp_text of fp_texts) {
+      cb.footprint.add("silkscreentext", (pb) =>
+        pb.setProps({
+          text: fp_text.text,
+          pcbX: fp_text.at[0],
+          pcbY: -fp_text.at[1],
+          layer: convertKicadLayerToTscircuitLayer(fp_text.layer)!,
+          fontSize: fp_text.effects?.font.size[0],
+
+          // TODO
+          // rotation: fp_text.angle,
+        })
+      )
     }
   })
 
