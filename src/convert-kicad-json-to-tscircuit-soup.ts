@@ -29,7 +29,7 @@ export const convertKicadJsonToTsCircuitSoup = async (
         pb
           .setProps({
             x: pad.at[0],
-            y: pad.at[1],
+            y: -pad.at[1],
             // ??? @tscircuit/builder bug? width and height are not recognized
             width: pad.size[0],
             height: pad.size[1],
@@ -45,8 +45,8 @@ export const convertKicadJsonToTsCircuitSoup = async (
         cb.footprint.add("pcbtrace", (pb) =>
           pb.setProps({
             route: [
-              { x: fp_line.start[0], y: fp_line.start[1] },
-              { x: fp_line.end[0], y: fp_line.end[1] },
+              { x: fp_line.start[0], y: -fp_line.start[1] },
+              { x: fp_line.end[0], y: -fp_line.end[1] },
             ],
             layer: convertKicadLayerToTscircuitLayer(fp_line.layer),
             thickness: fp_line.stroke.width,
@@ -56,8 +56,8 @@ export const convertKicadJsonToTsCircuitSoup = async (
         cb.footprint.add("silkscreenpath", (lb) =>
           lb.setProps({
             route: [
-              { x: fp_line.start[0], y: fp_line.start[1] },
-              { x: fp_line.end[0], y: fp_line.end[1] },
+              { x: fp_line.start[0], y: -fp_line.start[1] },
+              { x: fp_line.end[0], y: -fp_line.end[1] },
             ],
             layer: "top", //convertKicadLayerToTscircuitLayer(fp_line.layer),
           })
