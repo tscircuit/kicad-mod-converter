@@ -7,9 +7,14 @@
   "scripts": {
     "test:pull-kicad-footprints": "git clone --depth 1 https://gitlab.com/kicad/libraries/kicad-footprints.git",
     "test": "ava",
-    "build": "tsup ./src/index.ts --dts --sourcemap",
+    "build": "npm run build:lib && npm run build:cli",
+    "build:lib": "tsup ./src/index.ts --dts --sourcemap",
     "benchmark": "DEBUG='' RUN_BENCHMARK=1 npx ava --color -T 2m ./tests/kicad-file-tests/benchmark.test.ts",
-    "cli": "tsx ./src/cli/cli.ts"
+    "cli": "tsx ./src/cli/cli.ts",
+    "build:cli": "tsup ./src/cli/cli.ts --dts --sourcemap"
+  },
+  "bin": {
+    "kicad-mod-converter": "./dist/cli.cjs"
   },
   "files": [
     "dist"

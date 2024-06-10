@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { perfectCli } from "perfect-cli"
 import { program } from "commander"
 import { convertKicadDirectoryToTs } from "./cmds"

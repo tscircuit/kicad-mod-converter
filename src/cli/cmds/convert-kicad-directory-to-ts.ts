@@ -58,7 +58,7 @@ export const convertKicadDirectoryToTs = async (args: {
   const kicadModFiles = scanDirectory(inputDir).map((fpath) =>
     relative(inputDir, fpath)
   )
-  console.log(kicadModFiles)
+  console.log(`Converting ${kicadModFiles.length} kicad_mod files...`)
 
   // 2. Convert each kicad_mod file to ts and write to output directory with same path
   const exports = await Promise.all(
