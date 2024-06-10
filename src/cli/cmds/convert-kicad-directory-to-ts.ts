@@ -7,9 +7,12 @@ import {
   existsSync,
 } from "node:fs"
 import { join, relative, dirname } from "node:path"
+import { format } from "prettier"
 
-function camelCase(str: string) {
-  return str.replace(/-([a-z])/g, (g: any) => g[1].toUpperCase())
+function normalizeFileNameToVarName(str: string) {
+  return str
+    .replace(/[^a-zA-Z0-9]/g, "_")
+    .replace(/-([a-z])/g, (g: any) => g[1].toUpperCase())
 }
 
 async function getTsFileContentFromKicadModFile(kicadModFilePath: string) {
@@ -18,13 +21,19 @@ async function getTsFileContentFromKicadModFile(kicadModFilePath: string) {
 
   const tsCircuitSoup = await parseKicadModToTscircuitSoup(kicadModFileContent)
 
-  const varName = camelCase(fileNameWoExt!)
+  const varName = normalizeFileNameToVarName(fileNameWoExt!)
 
-  const tsContent = `
+  const tsContent = format(
+    `
 export const ${varName} = ${JSON.stringify(tsCircuitSoup, null, "  ")};
 
 export default ${varName};
-  `.trim()
+  `.trim(),
+    {
+      parser: "typescript",
+      semi: false,
+    },
+  )
 
   return tsContent
 }
@@ -56,7 +65,7 @@ export const convertKicadDirectoryToTs = async (args: {
   }
 
   const kicadModFiles = scanDirectory(inputDir).map((fpath) =>
-    relative(inputDir, fpath)
+    relative(inputDir, fpath),
   )
   console.log(`Converting ${kicadModFiles.length} kicad_mod files...`)
 
@@ -66,7 +75,8 @@ export const convertKicadDirectoryToTs = async (args: {
       const inputFilePath = join(inputDir, file)
       const outputFilePath = join(
         outputDir,
-        `${file.replace(".kicad_mod", ".ts")}`
+        "converted-kicad-mods",
+        `${normalizeFileNameToVarName(file).replace("_kicad_mod", ".ts")}`,
       )
 
       const tsContent = await getTsFileContentFromKicadModFile(inputFilePath)
@@ -80,20 +90,19 @@ export const convertKicadDirectoryToTs = async (args: {
       writeFileSync(outputFilePath, tsContent)
 
       return {
-        varName: camelCase(file.split(".")[0]!),
-        relativePath: `./${relative(outputDir, outputFilePath).replace(
-          /\\/g,
-          "/"
-        )}`,
+        varName: normalizeFileNameToVarName(file.split(".")[0]!),
+        relativePath: `./${relative(outputDir, outputFilePath)
+          .replace(/\\/g, "/")
+          .replace(/\.ts$/, "")}`,
       }
-    })
+    }),
   )
 
   // 3. Write an "index.ts" file in the output directory that exports all the files
   const indexContent = exports
     .map(
       (exp) =>
-        `export { default as ${exp.varName} } from '${exp.relativePath}';`
+        `export { default as ${exp.varName} } from '${exp.relativePath}';`,
     )
     .join("\n")
 
