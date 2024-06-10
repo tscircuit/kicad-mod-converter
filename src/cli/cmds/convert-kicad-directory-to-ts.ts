@@ -80,7 +80,7 @@ export const convertKicadDirectoryToTs = async (args: {
       writeFileSync(outputFilePath, tsContent)
 
       return {
-        varName: camelCase(file.split(".")[0]),
+        varName: camelCase(file.split(".")[0]!),
         relativePath: `./${relative(outputDir, outputFilePath).replace(
           /\\/g,
           "/"
