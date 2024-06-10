@@ -21,6 +21,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Pull kicad footprints
+        run: npm run test:pull-kicad-footprints
+
       - name: Run tests
         run: npm run test
 
