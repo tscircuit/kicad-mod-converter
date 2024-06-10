@@ -1,5 +1,12 @@
 import { parseKicadModToTscircuitSoup } from "src/parse-kicad-mod-to-tscircuit-soup"
-import { readFileSync } from "node:fs"
+import {
+  readFileSync,
+  readdirSync,
+  writeFileSync,
+  mkdirSync,
+  existsSync,
+} from "node:fs"
+import { join, relative, dirname } from "node:path"
 
 function camelCase(str: string) {
   return str.replace(/-([a-z])/g, (g: any) => g[1].toUpperCase())
@@ -14,23 +21,66 @@ async function getTsFileContentFromKicadModFile(kicadModFilePath: string) {
   const varName = camelCase(fileNameWoExt!)
 
   const tsContent = `
-  
-export const ${varName} = ${JSON.stringify(tsCircuitSoup, null, "  ")}
+export const ${varName} = ${JSON.stringify(tsCircuitSoup, null, "  ")};
 
-export default ${varName}
-  
+export default ${varName};
   `.trim()
 
   return tsContent
 }
 
-export const convertDirectory = (args: {
+export const convertDirectory = async (args: {
   inputDir: string
   outputDir: string
 }) => {
+  const { inputDir, outputDir } = args
+
+  // Ensure output directory exists
+  if (!existsSync(outputDir)) {
+    mkdirSync(outputDir, { recursive: true })
+  }
+
   // 1. Scan directory for .kicad_mod files (usually inputDir is a .pretty dir)
-  // 2. Convert each kicad_mod file to ts and write to output directory with
-  //    same path
-  // 3. Write a "index.ts" file in the output directory that exports all the
-  //    of the files
+  const kicadModFiles = readdirSync(inputDir).filter((file) =>
+    file.endsWith(".kicad_mod")
+  )
+
+  // 2. Convert each kicad_mod file to ts and write to output directory with same path
+  const exports = await Promise.all(
+    kicadModFiles.map(async (file) => {
+      const inputFilePath = join(inputDir, file)
+      const outputFilePath = join(
+        outputDir,
+        `${file.replace(".kicad_mod", ".ts")}`
+      )
+
+      const tsContent = await getTsFileContentFromKicadModFile(inputFilePath)
+
+      // Ensure the directory for the output file exists
+      const outputFileDir = dirname(outputFilePath)
+      if (!existsSync(outputFileDir)) {
+        mkdirSync(outputFileDir, { recursive: true })
+      }
+
+      writeFileSync(outputFilePath, tsContent)
+
+      return {
+        varName: camelCase(file.split(".")[0]),
+        relativePath: `./${relative(outputDir, outputFilePath).replace(
+          /\\/g,
+          "/"
+        )}`,
+      }
+    })
+  )
+
+  // 3. Write an "index.ts" file in the output directory that exports all the files
+  const indexContent = exports
+    .map(
+      (exp) =>
+        `export { default as ${exp.varName} } from '${exp.relativePath}';`
+    )
+    .join("\n")
+
+  writeFileSync(join(outputDir, "index.ts"), indexContent)
 }
