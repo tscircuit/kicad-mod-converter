@@ -19,7 +19,7 @@ export const convertKicadLayerToTscircuitLayer = (kicadLayer: string) => {
 }
 
 export const convertKicadJsonToTsCircuitSoup = async (
-  kicadJson: KicadModJson
+  kicadJson: KicadModJson,
 ): Promise<AnySoupElement[]> => {
   const { fp_lines, fp_texts, pads, footprint_name } = kicadJson
 
@@ -39,7 +39,7 @@ export const convertKicadJsonToTsCircuitSoup = async (
             shape: "rect",
             port_hints: [pad.name],
           })
-          .setSize(pad.size[0], pad.size[1])
+          .setSize(pad.size[0], pad.size[1]),
       )
     }
     for (const fp_line of fp_lines) {
@@ -52,7 +52,7 @@ export const convertKicadJsonToTsCircuitSoup = async (
             ],
             layer: convertKicadLayerToTscircuitLayer(fp_line.layer),
             thickness: fp_line.stroke.width,
-          })
+          }),
         )
       } else if (fp_line.layer === "F.SilkS") {
         cb.footprint.add("silkscreenpath", (lb) =>
@@ -62,7 +62,7 @@ export const convertKicadJsonToTsCircuitSoup = async (
               { x: fp_line.end[0], y: -fp_line.end[1] },
             ],
             layer: "top", //convertKicadLayerToTscircuitLayer(fp_line.layer),
-          })
+          }),
         )
       } else {
         debug("Unhandled layer for fp_line", fp_line.layer)
@@ -76,11 +76,11 @@ export const convertKicadJsonToTsCircuitSoup = async (
           pcbX: fp_text.at[0],
           pcbY: -fp_text.at[1],
           layer: convertKicadLayerToTscircuitLayer(fp_text.layer)!,
-          fontSize: fp_text.effects?.font.size[0],
+          fontSize: fp_text.effects?.font?.size[0],
 
           // TODO
           // rotation: fp_text.angle,
-        })
+        }),
       )
     }
   })
