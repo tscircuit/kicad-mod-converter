@@ -96,7 +96,7 @@ export const parseKicadModToKicadJson = (fileContent: string): KicadModJson => {
   const fp_texts: FpText[] = []
 
   for (const fp_text_row of fp_texts_rows) {
-    const text = fp_text_row[1].valueOf()
+    const text = fp_text_row[2].valueOf()
     const at = getAttr(fp_text_row, "at")
     const layer = getAttr(fp_text_row, "layer")
     const uuid = getAttr(fp_text_row, "uuid")

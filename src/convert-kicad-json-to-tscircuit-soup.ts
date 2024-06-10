@@ -8,9 +8,11 @@ const debug = Debug("kicad-mod-converter")
 export const convertKicadLayerToTscircuitLayer = (kicadLayer: string) => {
   switch (kicadLayer) {
     case "F.Cu":
+    case "F.Fab":
     case "F.SilkS":
       return "top"
     case "B.Cu":
+    case "B.Fab":
     case "B.SilkS":
       return "bottom"
   }
@@ -29,7 +31,7 @@ export const convertKicadJsonToTsCircuitSoup = async (
         pb
           .setProps({
             x: pad.at[0],
-            y: pad.at[1],
+            y: -pad.at[1],
             // ??? @tscircuit/builder bug? width and height are not recognized
             width: pad.size[0],
             height: pad.size[1],
@@ -45,8 +47,8 @@ export const convertKicadJsonToTsCircuitSoup = async (
         cb.footprint.add("pcbtrace", (pb) =>
           pb.setProps({
             route: [
-              { x: fp_line.start[0], y: fp_line.start[1] },
-              { x: fp_line.end[0], y: fp_line.end[1] },
+              { x: fp_line.start[0], y: -fp_line.start[1] },
+              { x: fp_line.end[0], y: -fp_line.end[1] },
             ],
             layer: convertKicadLayerToTscircuitLayer(fp_line.layer),
             thickness: fp_line.stroke.width,
@@ -56,8 +58,8 @@ export const convertKicadJsonToTsCircuitSoup = async (
         cb.footprint.add("silkscreenpath", (lb) =>
           lb.setProps({
             route: [
-              { x: fp_line.start[0], y: fp_line.start[1] },
-              { x: fp_line.end[0], y: fp_line.end[1] },
+              { x: fp_line.start[0], y: -fp_line.start[1] },
+              { x: fp_line.end[0], y: -fp_line.end[1] },
             ],
             layer: "top", //convertKicadLayerToTscircuitLayer(fp_line.layer),
           })
@@ -65,6 +67,21 @@ export const convertKicadJsonToTsCircuitSoup = async (
       } else {
         debug("Unhandled layer for fp_line", fp_line.layer)
       }
+    }
+
+    for (const fp_text of fp_texts) {
+      cb.footprint.add("silkscreentext", (pb) =>
+        pb.setProps({
+          text: fp_text.text,
+          pcbX: fp_text.at[0],
+          pcbY: -fp_text.at[1],
+          layer: convertKicadLayerToTscircuitLayer(fp_text.layer)!,
+          fontSize: fp_text.effects?.font.size[0],
+
+          // TODO
+          // rotation: fp_text.angle,
+        })
+      )
     }
   })
 
