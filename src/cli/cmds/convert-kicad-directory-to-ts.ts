@@ -29,7 +29,7 @@ export default ${varName};
   return tsContent
 }
 
-export const convertDirectory = async (args: {
+export const convertKicadDirectoryToTs = async (args: {
   inputDir: string
   outputDir: string
 }) => {
@@ -40,10 +40,25 @@ export const convertDirectory = async (args: {
     mkdirSync(outputDir, { recursive: true })
   }
 
-  // 1. Scan directory for .kicad_mod files (usually inputDir is a .pretty dir)
-  const kicadModFiles = readdirSync(inputDir).filter((file) =>
-    file.endsWith(".kicad_mod")
+  // 1. Deep scan directory for .kicad_mod files (usually inputDir is a .pretty dir)
+  const scanDirectory = (dir: string): string[] => {
+    let files: string[] = []
+    const entries = readdirSync(dir, { withFileTypes: true })
+    for (const entry of entries) {
+      const fullPath = join(dir, entry.name)
+      if (entry.isDirectory()) {
+        files = files.concat(scanDirectory(fullPath))
+      } else if (entry.isFile() && entry.name.endsWith(".kicad_mod")) {
+        files.push(fullPath)
+      }
+    }
+    return files
+  }
+
+  const kicadModFiles = scanDirectory(inputDir).map((fpath) =>
+    relative(inputDir, fpath)
   )
+  console.log(kicadModFiles)
 
   // 2. Convert each kicad_mod file to ts and write to output directory with same path
   const exports = await Promise.all(
