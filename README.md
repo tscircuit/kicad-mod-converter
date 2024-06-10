@@ -4,15 +4,56 @@ This module converts kicad files into a [tscircuit soup json](https://docs.tscir
 
 ## CLI Usage
 
-```
+```bash
 npm install -g kicad-mod-converter
+```
 
-kicad-mod-converter # interactive usage
+```bash
+# interactive usage
+kicad-mod-converter
+```
 
+```bash
 # Convert a directory ./my-footprints.pretty to a typescript directory
 kicad-mod-converter convert-kicad-directory --input-dir ./my-footprints.pretty --output-dir ./my-tscircuit-footprints
 ```
 
+### Using the Converted Kicad Directory
+
+> [!NOTE]
+> You should publish the generated library to the tscircuit registry! Just run `tsci publish` inside the directory!
+>
+> You can then use `tsci add yourgithubusername/package-name`
+
+```tsx
+import { Battery_CR1225 } from "./my-tscircuit-footprints"
+
+export default () => (
+  <group>
+    <component footprint={Battery_CR1225} />
+  </group>
+)
+```
+
+## Library Usage
+
+```bash
+npm add kicad-mod-converter
+```
+
+```ts
+import { parseKicadModToTscircuitSoup } from "kicad-mod-converter"
+import { readFileSync } from "node:fs"
+
+const fileContent = readFileSync("SW_SP3T_PCM13.kicad_mod")
+const jsonSoup = await parseKicadModToTscircuitSoup(fileContent)
+/*
+ * {
+ *   "type": "pcb_smtpad",
+ *   "x": 0.345,
+ *   ...
+ */
+```
 
 ## Development
 
