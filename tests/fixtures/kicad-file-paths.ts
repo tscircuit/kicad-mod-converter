@@ -1,4 +1,6 @@
 export const kicadFilePaths = [
+  "BatteryHolder_Keystone_590.kicad_mod",
+  "Adafruit_Feather.kicad_mod",
   "USB_C_Receptacle_CNCTech_C-ARA1-AK51X.kicad_mod",
   "IDC-Header_2x09_P2.54mm_Horizontal.kicad_mod",
   "BatteryHolder_Keystone_2468_2xAAA.kicad_mod",

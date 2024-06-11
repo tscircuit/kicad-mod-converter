@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const point2 = z.tuple([z.number(), z.number()])
+export const point2 = z.tuple([z.coerce.number(), z.coerce.number()])
 export const point3 = z.tuple([z.number(), z.number(), z.number()])
 export const point = z.union([point2, point3])
 
@@ -49,12 +49,20 @@ export const pad_def = z.object({
         return { oval: false, width: a, height: a }
       }
       if ("oval" in a) return a
+      if (a.length === 2) {
+        return {
+          oval: false,
+          width: Number.parseFloat(a[0]),
+          height: Number.parseFloat(a[0]),
+          offset: point2.parse(a[1].slice(1)),
+        }
+      }
       if (a.length === 3 || a.length === 4) {
         return {
           oval: a[0] === "oval",
           width: Number.parseFloat(a[1] as string),
           height: Number.parseFloat(a[2] as string),
-          offset: a[4],
+          offset: a[3] ? point2.parse(a[3].slice(1)) : undefined,
         }
       }
       return a
