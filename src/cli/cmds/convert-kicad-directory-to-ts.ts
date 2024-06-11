@@ -240,7 +240,7 @@ import { ${varName} } from "../lib/${varName}"
 export const ${varName}Example = () => {
   return (
     <group>
-      <component footprint=${varName} />
+      <component footprint={${varName}} />
     </group>
   )
 }
@@ -268,6 +268,10 @@ export const ${varName}Example = () => {
   writeFileSync(join(outputDir, "index.tsx"), indexContent)
 
   console.log(
-    `\n"${outputDir}" is now a tscircuit project that can be published or imported, you can run "npm run start" inside of it to inspect all the footprints or "npm run ship" to ship it to the tscircuit registry.`,
+    `\n"${outputDir}" is now a tscircuit project that can be published or imported.
+
+Run "npm install" to install dependencies then...
+1. Run "npm run start" inside of it to inspect all the footprints
+2. Run "npm run ship" to publish it to the tscircuit registry`,
   )
 }
