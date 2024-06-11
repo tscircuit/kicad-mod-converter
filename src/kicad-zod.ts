@@ -22,6 +22,12 @@ export const property_def = z.object({
   attributes: attributes_def,
 })
 
+const drill_def = z.object({
+  oval: z.boolean().default(false),
+  width: z.number().optional(),
+  height: z.number().optional(),
+})
+
 export const pad_def = z.object({
   name: z.string(),
   pad_type: z.enum(["thru_hole", "smd", "np_thru_hole", "connect"]),
@@ -35,7 +41,25 @@ export const pad_def = z.object({
   ]),
   at: point,
   size: point2,
-  drill: z.number().optional(),
+  drill: z
+    .union([z.number(), z.array(z.union([z.number(), z.string()])), drill_def])
+    .transform((a) => {
+      if (typeof a === "number") {
+        return { oval: false, width: a, height: a }
+      }
+      if ("oval" in a) return a
+      if (a.length === 3) {
+        return {
+          oval: a[0] === "oval",
+          width: Number.parseFloat(a[1] as string),
+          height: Number.parseFloat(a[2] as string),
+        }
+      }
+      console.log(a)
+      return a
+    })
+    .pipe(drill_def)
+    .optional(),
   layers: z.array(z.string()).optional(),
   roundrect_rratio: z.number().optional(),
   chamfer_ratio: z.number().optional(),
@@ -52,13 +76,6 @@ export const pad_def = z.object({
   thermal_width: z.number().optional(),
   thermal_gap: z.number().optional(),
   uuid: z.string().optional(),
-})
-
-export const drill_def = z.object({
-  oval: z.boolean().default(false),
-  diameter: z.number(),
-  width: z.number().optional(),
-  offset: point2.optional(),
 })
 
 export const effects_def = z

@@ -51,7 +51,7 @@ export const convertKicadJsonToTsCircuitSoup = async (
             x: pad.at[0],
             y: -pad.at[1],
             outer_diameter: pad.size[0],
-            hole_diameter: pad.drill,
+            hole_diameter: pad.drill?.width!,
             // TODO kicad uses "*.Cu" and "*.Mask" to mean "every"
             layers: ["top", "bottom"],
             port_hints: [pad.name],
@@ -62,7 +62,7 @@ export const convertKicadJsonToTsCircuitSoup = async (
           hb.setProps({
             x: pad.at[0],
             y: -pad.at[1],
-            hole_diameter: pad.drill,
+            hole_diameter: pad.drill?.width!,
           }),
         )
       } else if (pad.pad_type === "connect") {
