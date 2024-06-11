@@ -26,6 +26,7 @@ const drill_def = z.object({
   oval: z.boolean().default(false),
   width: z.number().optional(),
   height: z.number().optional(),
+  offset: point2.optional(),
 })
 
 export const pad_def = z.object({
@@ -42,20 +43,20 @@ export const pad_def = z.object({
   at: point,
   size: point2,
   drill: z
-    .union([z.number(), z.array(z.union([z.number(), z.string()])), drill_def])
+    .union([z.number(), z.array(z.any()), drill_def])
     .transform((a) => {
       if (typeof a === "number") {
         return { oval: false, width: a, height: a }
       }
       if ("oval" in a) return a
-      if (a.length === 3) {
+      if (a.length === 3 || a.length === 4) {
         return {
           oval: a[0] === "oval",
           width: Number.parseFloat(a[1] as string),
           height: Number.parseFloat(a[2] as string),
+          offset: a[4],
         }
       }
-      console.log(a)
       return a
     })
     .pipe(drill_def)
