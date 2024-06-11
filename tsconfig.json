@@ -3,10 +3,11 @@
     // Base Options recommended for all projects
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "target": "es2022",
+    "target": "ESNext",
     "allowJs": true,
     "resolveJsonModule": true,
     "moduleDetection": "force",
+    "moduleResolution": "Bundler",
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
@@ -15,9 +16,9 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     // We are not transpiling, so preserve our source code and do not emit files
-    "module": "preserve",
+    "module": "ESNext",
     "noEmit": true,
-    "lib": ["es2022"]
+    "lib": ["ESNext"]
   },
   // Include the necessary files for your project
   "include": ["**/*.ts", "**/*.tsx"],
