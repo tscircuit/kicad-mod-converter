@@ -4,6 +4,8 @@ export const point2 = z.tuple([z.number(), z.number()])
 export const point3 = z.tuple([z.number(), z.number(), z.number()])
 export const point = z.union([point2, point3])
 
+type MakeRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
+
 export const attributes_def = z
   .object({
     at: point,
@@ -96,7 +98,7 @@ export const fp_line = z
       ...data,
       width: undefined,
       stroke: data.stroke ?? { width: data.width },
-    }
+    } as MakeRequired<Omit<typeof data, "width">, "stroke">
   })
 
 export const kicad_mod_json_def = z.object({
