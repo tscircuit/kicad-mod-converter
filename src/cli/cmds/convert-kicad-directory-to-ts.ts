@@ -8,6 +8,7 @@ import {
 } from "node:fs"
 import { join, relative, dirname } from "node:path"
 import { format } from "prettier"
+import prompts from "prompts"
 
 function normalizeFileNameToVarName(str: string) {
   return str
@@ -49,6 +50,107 @@ export const convertKicadDirectoryToTs = async (args: {
     mkdirSync(outputDir, { recursive: true })
   }
 
+  // 0.1 If there's no package.json, we should offer to initialize and offer
+  //    some options for the name of the package
+  if (!existsSync(join(outputDir, "package.json"))) {
+    const { packageName } = await prompts({
+      name: "packageName",
+      type: "text",
+      message: "Enter the name of the package (e.g. mygithubname/my-package)",
+    })
+
+    // Get latest version of tscircuit
+    const tscircuitPackageInfo: any = await fetch(
+      "https://registry.npmjs.org/tscircuit",
+    ).then((r) => r.json())
+    // Get latest typescript version
+    const typescriptPackageInfo: any = await fetch(
+      "https://registry.npmjs.org/typescript",
+    ).then((r) => r.json())
+
+    if (!packageName.includes("/")) {
+      throw new Error(
+        "Package name must be in the format of 'mygithubname/my-package'",
+      )
+    }
+
+    // TODO this is basically doing a simplified version of "tsci init", we
+    // should just do "tsci init" in the future
+    writeFileSync(
+      join(outputDir, "package.json"),
+      JSON.stringify(
+        {
+          name: `@tsci/${packageName.replace("@", "")}`,
+          version: "0.0.1",
+          description: "",
+          main: "dist/index.cjs",
+          scripts: {
+            start: "npm run dev",
+            dev: "tsci dev",
+            build: "tsup ./index.ts --sourcemap --dts",
+            ship: "tsci publish --increment",
+          },
+          files: ["dist"],
+          devDependencies: {
+            typescript: `^${typescriptPackageInfo["dist-tags"].latest}`,
+            tscircuit: `^${tscircuitPackageInfo["dist-tags"].latest}`,
+          },
+        },
+        null,
+        2,
+      ),
+    )
+
+    if (!existsSync(join(outputDir, ".gitignore"))) {
+      writeFileSync(
+        join(outputDir, ".gitignore"),
+        ["node_modules", "dist"].join("\n"),
+      )
+    }
+
+    if (!existsSync(join(outputDir, ".github/workflows/tsci-publish.yml"))) {
+      const { shouldCreateGithubWorkflow } = await prompts({
+        name: "shouldCreateGithubWorkflow",
+        type: "confirm",
+        message:
+          "BETA FEATURE: Create a GitHub workflow for CI/CD to autopublish to the tscircuit registry?",
+      })
+
+      mkdirSync(join(outputDir, ".github/workflows"), { recursive: true })
+
+      if (shouldCreateGithubWorkflow) {
+        writeFileSync(
+          join(outputDir, ".github/workflows/tsci-publish.yml"),
+          `
+name: Publish to tscircuit registry
+on:
+  push:
+    branches:
+      - main
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    working-directory: ${outputDir}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+      - run: npm install
+      - run: npm run build
+      - run: npm run ship
+        env:
+          NODE_AUTH_TOKEN: \${{ secrets.TSCI_TOKEN }}
+`.trim(),
+        )
+        console.log(
+          "NOTE: You need to add a TSCI_TOKEN secret to your org or repo. You can generate a token from https://registry.tscircuit.com/profile",
+        )
+      }
+    }
+  }
+
   // 1. Deep scan directory for .kicad_mod files (usually inputDir is a .pretty dir)
   const scanDirectory = (dir: string): string[] => {
     let files: string[] = []
@@ -75,7 +177,12 @@ export const convertKicadDirectoryToTs = async (args: {
       const inputFilePath = join(inputDir, file)
       const outputFilePath = join(
         outputDir,
-        "converted-kicad-mods",
+        "lib",
+        `${normalizeFileNameToVarName(file).replace("_kicad_mod", ".ts")}`,
+      )
+      const exampleFilePath = join(
+        outputDir,
+        "examples",
         `${normalizeFileNameToVarName(file).replace("_kicad_mod", ".ts")}`,
       )
 
@@ -86,11 +193,31 @@ export const convertKicadDirectoryToTs = async (args: {
       if (!existsSync(outputFileDir)) {
         mkdirSync(outputFileDir, { recursive: true })
       }
+      const exampleFileDir = dirname(exampleFilePath)
+      if (!existsSync(exampleFileDir)) {
+        mkdirSync(exampleFileDir, { recursive: true })
+      }
 
       writeFileSync(outputFilePath, tsContent)
 
+      const varName = normalizeFileNameToVarName(file.replace("_kicad_mod", ""))
+
+      const exampleContent = `
+import { ${varName} } from "../lib/${varName}"
+
+export const ${varName}Example = () => {
+  return (
+    <group>
+      <component footprint=${varName} />
+    </group>
+  )
+}
+`
+
+      writeFileSync(exampleFilePath, exampleContent)
+
       return {
-        varName: normalizeFileNameToVarName(file.split(".")[0]!),
+        varName,
         relativePath: `./${relative(outputDir, outputFilePath)
           .replace(/\\/g, "/")
           .replace(/\.ts$/, "")}`,
