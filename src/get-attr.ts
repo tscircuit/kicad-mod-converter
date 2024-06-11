@@ -10,7 +10,7 @@ export const formatAttr = (val: any, attrKey: string) => {
         for (const fontElm of elm.slice(1)) {
           if (fontElm.length === 2) {
             fontObj[fontElm[0].valueOf()] = Number.parseFloat(
-              fontElm[1].valueOf()
+              fontElm[1].valueOf(),
             )
           } else {
             fontObj[fontElm[0].valueOf()] = fontElm
@@ -35,6 +35,7 @@ export const formatAttr = (val: any, attrKey: string) => {
     attrKey === "at" ||
     attrKey === "size" ||
     attrKey === "start" ||
+    attrKey === "mid" ||
     attrKey === "end"
   ) {
     return val.map((n: any) => Number.parseFloat(n.valueOf()))

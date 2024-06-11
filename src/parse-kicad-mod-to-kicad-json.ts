@@ -3,6 +3,7 @@ import {
   attributes_def,
   kicad_mod_json_def,
   pad_def,
+  type FpArc,
   type FpLine,
   type FpText,
   type KicadModJson,
@@ -136,12 +137,36 @@ export const parseKicadModToKicadJson = (fileContent: string): KicadModJson => {
     })
   }
 
+  const fp_arcs: FpArc[] = []
+  const fp_arcs_rows = kicadSExpr
+    .slice(2)
+    .filter((row: any[]) => row[0] === "fp_arc")
+
+  for (const fp_arc_row of fp_arcs_rows) {
+    const start = getAttr(fp_arc_row, "start")
+    const mid = getAttr(fp_arc_row, "mid")
+    const end = getAttr(fp_arc_row, "end")
+    const stroke = getAttr(fp_arc_row, "stroke")
+    const layer = getAttr(fp_arc_row, "layer")
+    const uuid = getAttr(fp_arc_row, "uuid")
+
+    fp_arcs.push({
+      start,
+      mid,
+      end,
+      stroke,
+      layer,
+      uuid,
+    })
+  }
+
   return kicad_mod_json_def.parse({
     footprint_name: footprintName,
     ...topLevelAttributes,
     properties,
     fp_lines,
     fp_texts,
+    fp_arcs,
     pads,
   })
 }
