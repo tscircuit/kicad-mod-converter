@@ -79,6 +79,18 @@ export const fp_text_def = z.object({
   effects: effects_def.partial(),
 })
 
+export const fp_arc_def = z.object({
+  start: point2,
+  mid: point2,
+  end: point2,
+  stroke: z.object({
+    width: z.number(),
+    type: z.string(),
+  }),
+  layer: z.string(),
+  uuid: z.string().optional(),
+})
+
 export const fp_line = z
   .object({
     start: point2,
@@ -113,6 +125,7 @@ export const kicad_mod_json_def = z.object({
   properties: z.array(property_def),
   fp_lines: z.array(fp_line),
   fp_texts: z.array(fp_text_def),
+  fp_arcs: z.array(fp_arc_def),
   pads: z.array(pad_def),
 })
 
