@@ -14,9 +14,12 @@ kicad-mod-converter
 ```
 
 ```bash
-# Convert a directory ./my-footprints.pretty to a typescript directory
+# Convert a directory ./my-footprints.pretty to a tscircuit project
 kicad-mod-converter convert-kicad-directory --input-dir ./my-footprints.pretty --output-dir ./my-tscircuit-footprints
 ```
+
+You can now go inside `./my-tscircuit-footprints` and run `npm i` and `npm run start` to
+view all your footprints!
 
 ### Using the Converted Kicad Directory
 
