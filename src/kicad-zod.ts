@@ -35,6 +35,7 @@ export const pad_def = z.object({
   ]),
   at: point,
   size: point2,
+  drill: z.number().optional(),
   layers: z.array(z.string()).optional(),
   roundrect_rratio: z.number().optional(),
   chamfer_ratio: z.number().optional(),

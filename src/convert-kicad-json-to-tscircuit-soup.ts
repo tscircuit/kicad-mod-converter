@@ -27,20 +27,44 @@ export const convertKicadJsonToTsCircuitSoup = async (
 
   pb.add("component", (cb) => {
     for (const pad of pads) {
-      cb.footprint.add("smtpad", (pb) =>
-        pb
-          .setProps({
+      if (pad.pad_type === "smd") {
+        cb.footprint.add("smtpad", (pb) =>
+          pb
+            .setProps({
+              x: pad.at[0],
+              y: -pad.at[1],
+              // ??? @tscircuit/builder bug? width and height are not recognized
+              width: pad.size[0],
+              height: pad.size[1],
+              layer: pad.layers?.[0]! as any,
+              shape: "rect",
+              port_hints: [pad.name],
+            })
+            .setSize(pad.size[0], pad.size[1]),
+        )
+      } else if (pad.pad_type === "thru_hole") {
+        cb.footprint.add("platedhole", (phb) =>
+          phb.setProps({
             x: pad.at[0],
             y: -pad.at[1],
-            // ??? @tscircuit/builder bug? width and height are not recognized
-            width: pad.size[0],
-            height: pad.size[1],
-            layer: pad.layers?.[0]! as any,
-            shape: "rect",
+            outer_diameter: pad.size[0],
+            hole_diameter: pad.drill,
+            // TODO kicad uses "*.Cu" and "*.Mask" to mean "every"
+            layers: ["top", "bottom"],
             port_hints: [pad.name],
-          })
-          .setSize(pad.size[0], pad.size[1]),
-      )
+          }),
+        )
+      } else if (pad.pad_type === "np_thru_hole") {
+        cb.footprint.add("hole", (hb) =>
+          hb.setProps({
+            x: pad.at[0],
+            y: -pad.at[1],
+            hole_diameter: pad.drill,
+          }),
+        )
+      } else if (pad.pad_type === "connect") {
+        // ???
+      }
     }
     for (const fp_line of fp_lines) {
       if (fp_line.layer === "F.Cu") {

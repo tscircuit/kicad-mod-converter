@@ -24,7 +24,7 @@ export const parseKicadModToKicadJson = (fileContent: string): KicadModJson => {
   const simpleTopLevelAttributes = Object.entries(kicad_mod_json_def.shape)
     .filter(
       ([attributeKey, def]) =>
-        def._def.typeName === "ZodString" || attributeKey === "tags"
+        def._def.typeName === "ZodString" || attributeKey === "tags",
     )
     .map(([attributeKey]) => attributeKey)
   for (const kicadSExprRow of kicadSExpr.slice(2)) {
@@ -46,7 +46,7 @@ export const parseKicadModToKicadJson = (fileContent: string): KicadModJson => {
           const attrKey = attrAr[0].valueOf()
           acc[attrKey] = formatAttr(attrAr.slice(1), attrKey)
           return acc
-        }, {} as any)
+        }, {} as any),
       )
 
       return {
@@ -63,6 +63,7 @@ export const parseKicadModToKicadJson = (fileContent: string): KicadModJson => {
   for (const row of padRows) {
     const at = getAttr(row, "at")
     const size = getAttr(row, "size")
+    const drill = getAttr(row, "drill")
     let layers = getAttr(row, "layers")
     if (Array.isArray(layers)) {
       layers = layers.map((layer) => layer.valueOf())
@@ -79,6 +80,7 @@ export const parseKicadModToKicadJson = (fileContent: string): KicadModJson => {
       pad_type: row[2].valueOf(),
       pad_shape: row[3].valueOf(),
       at,
+      drill,
       size,
       layers,
       roundrect_rratio,
