@@ -2,6 +2,8 @@ import type { KicadModJson } from "./kicad-zod"
 import type { AnySoupElement } from "@tscircuit/soup"
 import { createProjectBuilder } from "@tscircuit/builder"
 import Debug from "debug"
+import { generateArcPath, getArcLength } from "./math/arc-utils"
+import { makePoint } from "./math/make-point"
 
 const debug = Debug("kicad-mod-converter")
 
@@ -21,7 +23,8 @@ export const convertKicadLayerToTscircuitLayer = (kicadLayer: string) => {
 export const convertKicadJsonToTsCircuitSoup = async (
   kicadJson: KicadModJson,
 ): Promise<AnySoupElement[]> => {
-  const { fp_lines, fp_texts, pads, footprint_name, properties } = kicadJson
+  const { fp_lines, fp_texts, fp_arcs, pads, footprint_name, properties } =
+    kicadJson
 
   const pb = createProjectBuilder()
 
@@ -93,6 +96,23 @@ export const convertKicadJsonToTsCircuitSoup = async (
       }
     }
 
+    for (const fp_arc of fp_arcs) {
+      const { stroke, layer } = fp_arc
+      const start = makePoint(fp_arc.start)
+      const mid = makePoint(fp_arc.mid)
+      const end = makePoint(fp_arc.end)
+      const arcLength = getArcLength(start, mid, end)
+
+      const arcPoints = generateArcPath(start, mid, end, Math.ceil(arcLength))
+
+      cb.footprint.add("silkscreenpath", (sp) =>
+        sp.setProps({
+          route: arcPoints.map((p) => ({ x: p.x, y: -p.y })),
+          layer: convertKicadLayerToTscircuitLayer(layer)!,
+        }),
+      )
+    }
+
     for (const fp_text of fp_texts) {
       cb.footprint.add("silkscreentext", (pb) =>
         pb.setProps({
@@ -109,12 +129,22 @@ export const convertKicadJsonToTsCircuitSoup = async (
     }
 
     // The reference property also becomes text
-    console.log(properties)
     const refProp = properties.find((prop) => prop.key === "Reference")
     const valProp = properties.find((prop) => prop.key === "Value")
-    // if (properties[""]) {
-
-    // }
+    const propFabTexts = [refProp, valProp].filter((p) => p && Boolean(p.val))
+    for (const propFab of propFabTexts) {
+      const at = propFab!.attributes.at
+      if (!at) continue
+      cb.footprint.add("fabricationnotetext", (fnt) =>
+        fnt.setProps({
+          text: propFab!.val,
+          pcbX: at[0],
+          pcbY: -at[1],
+          layer: "top",
+          fontSize: 1.27,
+        }),
+      )
+    }
   })
 
   const soup = await pb.build()
