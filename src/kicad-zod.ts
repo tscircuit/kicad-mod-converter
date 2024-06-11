@@ -76,21 +76,33 @@ export const fp_text_def = z.object({
   effects: effects_def.partial(),
 })
 
-export const fp_line = z.object({
-  start: point2,
-  end: point2,
-  stroke: z.object({
-    width: z.number(),
-    type: z.string(),
-  }),
-  layer: z.string(),
-  uuid: z.string().optional(),
-})
+export const fp_line = z
+  .object({
+    start: point2,
+    end: point2,
+    stroke: z
+      .object({
+        width: z.number(),
+        type: z.string(),
+      })
+      .optional(),
+    width: z.number().optional(),
+    layer: z.string(),
+    uuid: z.string().optional(),
+  })
+  // Old kicad versions don't have "stroke"
+  .transform((data) => {
+    return {
+      ...data,
+      width: undefined,
+      stroke: data.stroke ?? { width: data.width },
+    }
+  })
 
 export const kicad_mod_json_def = z.object({
   footprint_name: z.string(),
-  version: z.string(),
-  generator: z.string(),
+  version: z.string().optional(),
+  generator: z.string().optional(),
   generator_version: z.string().optional(),
   layer: z.string(),
   descr: z.string().default(""),
