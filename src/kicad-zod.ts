@@ -138,4 +138,5 @@ export type Pad = z.infer<typeof pad_def>
 export type EffectsObj = z.infer<typeof effects_def>
 export type FpText = z.infer<typeof fp_text_def>
 export type FpLine = z.infer<typeof fp_line>
+export type FpArc = z.infer<typeof fp_arc_def>
 export type KicadModJson = z.infer<typeof kicad_mod_json_def>

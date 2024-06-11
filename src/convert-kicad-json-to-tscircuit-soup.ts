@@ -21,7 +21,7 @@ export const convertKicadLayerToTscircuitLayer = (kicadLayer: string) => {
 export const convertKicadJsonToTsCircuitSoup = async (
   kicadJson: KicadModJson,
 ): Promise<AnySoupElement[]> => {
-  const { fp_lines, fp_texts, pads, footprint_name } = kicadJson
+  const { fp_lines, fp_texts, pads, footprint_name, properties } = kicadJson
 
   const pb = createProjectBuilder()
 
@@ -107,6 +107,14 @@ export const convertKicadJsonToTsCircuitSoup = async (
         }),
       )
     }
+
+    // The reference property also becomes text
+    console.log(properties)
+    const refProp = properties.find((prop) => prop.key === "Reference")
+    const valProp = properties.find((prop) => prop.key === "Value")
+    // if (properties[""]) {
+
+    // }
   })
 
   const soup = await pb.build()
