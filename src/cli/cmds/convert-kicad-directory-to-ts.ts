@@ -6,7 +6,7 @@ import {
   mkdirSync,
   existsSync,
 } from "node:fs"
-import { join, relative, dirname } from "node:path"
+import path, { join, relative, dirname } from "node:path"
 import { format } from "prettier"
 import prompts from "prompts"
 
@@ -87,7 +87,7 @@ export const convertKicadDirectoryToTs = async (args: {
           scripts: {
             start: "npm run dev",
             dev: "tsci dev",
-            build: "tsup ./index.ts --sourcemap --dts",
+            build: "tsup ./index.tsx --sourcemap --dts",
             ship: "tsci publish --increment",
           },
           files: ["dist"],
@@ -148,6 +148,38 @@ jobs:
           "NOTE: You need to add a TSCI_TOKEN secret to your org or repo. You can generate a token from https://registry.tscircuit.com/profile",
         )
       }
+
+      if (!existsSync(join(outputDir, "tsconfig.json"))) {
+        writeFileSync(
+          join(outputDir, "tsconfig.json"),
+          JSON.stringify(
+            {
+              compilerOptions: {
+                lib: ["ESNext"],
+                target: "ESNext",
+                module: "ESNext",
+                moduleDetection: "force",
+                jsx: "react-jsx",
+                allowJs: true,
+                types: ["@tscircuit/react-fiber"],
+                baseUrl: ".",
+                moduleResolution: "bundler",
+                allowImportingTsExtensions: true,
+                verbatimModuleSyntax: true,
+                noEmit: true,
+                strict: true,
+                skipLibCheck: true,
+                noFallthroughCasesInSwitch: true,
+                noUnusedLocals: false,
+                noUnusedParameters: false,
+                noPropertyAccessFromIndexSignature: false,
+              },
+            },
+            null,
+            "  ",
+          ),
+        )
+      }
     }
   }
 
@@ -178,12 +210,12 @@ jobs:
       const outputFilePath = join(
         outputDir,
         "lib",
-        `${normalizeFileNameToVarName(file).replace("_kicad_mod", ".ts")}`,
+        `${normalizeFileNameToVarName(file).replace("_kicad_mod", ".tsx")}`,
       )
       const exampleFilePath = join(
         outputDir,
         "examples",
-        `${normalizeFileNameToVarName(file).replace("_kicad_mod", ".ts")}`,
+        `${normalizeFileNameToVarName(file).replace("_kicad_mod", ".tsx")}`,
       )
 
       const tsContent = await getTsFileContentFromKicadModFile(inputFilePath)
@@ -200,7 +232,7 @@ jobs:
 
       writeFileSync(outputFilePath, tsContent)
 
-      const varName = normalizeFileNameToVarName(file.replace("_kicad_mod", ""))
+      const varName = normalizeFileNameToVarName(file).replace("_kicad_mod", "")
 
       const exampleContent = `
 import { ${varName} } from "../lib/${varName}"
@@ -220,12 +252,12 @@ export const ${varName}Example = () => {
         varName,
         relativePath: `./${relative(outputDir, outputFilePath)
           .replace(/\\/g, "/")
-          .replace(/\.ts$/, "")}`,
+          .replace(/\.tsx$/, "")}`,
       }
     }),
   )
 
-  // 3. Write an "index.ts" file in the output directory that exports all the files
+  // 3. Write an "index.tsx" file in the output directory that exports all the files
   const indexContent = exports
     .map(
       (exp) =>
@@ -233,5 +265,9 @@ export const ${varName}Example = () => {
     )
     .join("\n")
 
-  writeFileSync(join(outputDir, "index.ts"), indexContent)
+  writeFileSync(join(outputDir, "index.tsx"), indexContent)
+
+  console.log(
+    `\n"${outputDir}" is now a tscircuit project that can be published or imported, you can run "npm run start" inside of it to inspect all the footprints or "npm run ship" to ship it to the tscircuit registry.`,
+  )
 }

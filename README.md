@@ -60,3 +60,13 @@ const jsonSoup = await parseKicadModToTscircuitSoup(fileContent)
 You should read about the [kicad sexpr syntax](https://dev-docs.kicad.org/en/file-formats/sexpr-intro/) to understand how to read the footprint files.
 
 There are tests in this repo, take a look in the `tests` directory to see how they work.
+
+> [!NOTE]
+> You'll need to pull the kicad-footprints official repo before you can run the
+> tests, you can do this by running `npm run test:pull-kicad-footprints`
+
+### CLI Testing
+
+You can test the cli by running `npm run cli`.
+
+If you want to test conversion of a kicad directory, run `npm run cli:test-convert`
