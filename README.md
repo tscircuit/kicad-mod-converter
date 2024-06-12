@@ -25,7 +25,7 @@ const jsonSoup = await parseKicadModToTscircuitSoup(fileContent)
  */
 ```
 
-You can also output "kicad json", an intermediary JSON format that more closely resembles the origina kicad sexpr.
+You can also output "kicad json", an intermediary JSON format that more closely resembles the original kicad sexpr.
 
 ```ts
 import { parseKicadModToKicadJson } from "kicad-mod-converter"
