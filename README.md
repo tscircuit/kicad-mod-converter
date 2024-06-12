@@ -2,6 +2,29 @@
 
 This module converts kicad files into a [tscircuit soup json](https://docs.tscircuit.com/quickstart), an easy-to-use JSON format for electronics.
 
+1. [Go To Library Usage](#library-usage)
+2. [Go To CLI Usage](#cli-usage)
+
+## Library Usage
+
+```bash
+npm add kicad-mod-converter
+```
+
+```ts
+import { parseKicadModToTscircuitSoup } from "kicad-mod-converter"
+import { readFileSync } from "node:fs"
+
+const fileContent = readFileSync("SW_SP3T_PCM13.kicad_mod")
+const jsonSoup = await parseKicadModToTscircuitSoup(fileContent)
+/*
+ * {
+ *   "type": "pcb_smtpad",
+ *   "x": 0.345,
+ *   ...
+ */
+```
+
 ## CLI Usage
 
 ```bash
@@ -36,26 +59,6 @@ export default () => (
     <component footprint={Battery_CR1225} />
   </group>
 )
-```
-
-## Library Usage
-
-```bash
-npm add kicad-mod-converter
-```
-
-```ts
-import { parseKicadModToTscircuitSoup } from "kicad-mod-converter"
-import { readFileSync } from "node:fs"
-
-const fileContent = readFileSync("SW_SP3T_PCM13.kicad_mod")
-const jsonSoup = await parseKicadModToTscircuitSoup(fileContent)
-/*
- * {
- *   "type": "pcb_smtpad",
- *   "x": 0.345,
- *   ...
- */
 ```
 
 ## Development
