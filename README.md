@@ -2,8 +2,8 @@
 
 This module converts kicad files into a [tscircuit soup json](https://docs.tscircuit.com/quickstart), an easy-to-use JSON format for electronics.
 
-1. [Go To Library Usage](#library-usage)
-2. [Go To CLI Usage](#cli-usage)
+1. [Library Usage](#library-usage)
+2. [CLI Usage](#cli-usage)
 
 ## Library Usage
 
