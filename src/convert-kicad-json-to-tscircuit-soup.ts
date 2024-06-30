@@ -88,6 +88,18 @@ export const convertKicadJsonToTsCircuitSoup = async (
               { x: fp_line.start[0], y: -fp_line.start[1] },
               { x: fp_line.end[0], y: -fp_line.end[1] },
             ],
+            layer: "top",
+            pcbX: "",
+            pcbY: ""
+          }),
+        )
+      } else if (fp_line.layer === "F.Fab") {
+        cb.footprint.add("fabricationnotepath", (lb) =>
+          lb.setProps({
+            route: [
+              { x: fp_line.start[0], y: -fp_line.start[1] },
+              { x: fp_line.end[0], y: -fp_line.end[1] },
+            ],
             layer: "top", //convertKicadLayerToTscircuitLayer(fp_line.layer),
           }),
         )
@@ -109,6 +121,8 @@ export const convertKicadJsonToTsCircuitSoup = async (
         sp.setProps({
           route: arcPoints.map((p) => ({ x: p.x, y: -p.y })),
           layer: convertKicadLayerToTscircuitLayer(layer)!,
+          pcbX: "",
+          pcbY: ""
         }),
       )
     }
