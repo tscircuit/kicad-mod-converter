@@ -23,4 +23,5 @@ test("convert tscircuit soup to kicad json", async (t) => {
 	fs.writeFileSync("debug.kicad_mod", kicadMod)
 	t.pass()
 })
+
 // npx ava ./tests/serialization/convert-tscircuit-soup-into-kicad-json.test.ts

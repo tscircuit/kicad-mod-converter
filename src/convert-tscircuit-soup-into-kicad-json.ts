@@ -1,4 +1,3 @@
-import type { AnySoupElement } from "@tscircuit/soup"
 import type { KicadModJson } from "./kicad-zod"
 
 export const convertTscircuitToKicadJson = (soup: any): KicadModJson => {
@@ -9,15 +8,30 @@ export const convertTscircuitToKicadJson = (soup: any): KicadModJson => {
 		pads: [],
 	}
 
-	const pcbs: AnySoupElement[] = soup.filter((component: any) =>
-		component.type.startsWith("pcb"),
-	)
+	const pcbs = soup.filter((component: any) => component.type.startsWith("pcb"))
 
 	for (const pcb of pcbs) {
 		if (pcb.type.includes("plated_hole")) {
-			kicadJson.pads.push(pcb)
-		} else if (pcb.type.includes("text")) {
-			kicadJson.fp_texts.push(pcb)
+			const newPad = {
+				name: pcb.port_hints[0],
+				pad_type: "thru_hole",
+				at: [pcb.x, pcb.y],
+				size: [pcb.outer_diameter, pcb.outer_diameter - pcb.hole_diameter],
+				layers: [pcb.layers[0], pcb.layers[1]],
+			}
+
+			kicadJson.pads.push(newPad)
+		} else if (pcb.type.includes("silkscreen_text")) {
+			const newText = {
+				fp_text_type: "user",
+				text: pcb.text,
+				layer: pcb.layer,
+				thickness: pcb.thickness,
+				at: [pcb.anchor_position.x, pcb.anchor_position.y],
+				effects: { font: { size: [pcb.font_size, pcb.font_size] } },
+			}
+
+			kicadJson.fp_texts.push(newText)
 		}
 	}
 
