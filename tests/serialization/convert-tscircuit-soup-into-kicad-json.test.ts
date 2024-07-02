@@ -1,4 +1,4 @@
-import * as fs from "node:fs"
+// import * as fs from "node:fs"
 import { logSoup } from "@tscircuit/log-soup"
 import type { AnySoupElement } from "@tscircuit/soup"
 import test from "ava"
@@ -20,8 +20,6 @@ test("convert tscircuit soup to kicad json", async (t) => {
 
 	await logSoup("convert tscircuit soup to kicad json", soup)
 
-	fs.writeFileSync("debug.kicad_mod", kicadMod)
+	// fs.writeFileSync("debug.kicad_mod", kicadMod)
 	t.pass()
 })
-
-// npx ava ./tests/serialization/convert-tscircuit-soup-into-kicad-json.test.ts
