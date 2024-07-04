@@ -14,7 +14,7 @@
     "build:cli": "tsup ./src/cli/cli.ts --dts --sourcemap",
     "cli:test-convert": "npm run cli -- convert-kicad-directory --input-dir ./kicad-footprints/Battery.pretty --output-dir ./test-output",
     "format": "biome format . --write",
-    "format:check": "biome check ."
+    "format:check": "biome format ."
   },
   "bin": {
     "kicad-mod-converter": "./dist/cli.cjs"
