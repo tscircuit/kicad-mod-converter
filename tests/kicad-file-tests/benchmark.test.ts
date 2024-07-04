@@ -29,10 +29,10 @@ test("benchmark: read_without_error", async (t) => {
 
     console.log(
       `${((passing.length / (failing.length + passing.length)) * 100).toFixed(
-        2
+        2,
       )}% ${runCount.toString().padStart(5, " ")}/${
         allKicadFiles.length
-      } ${(passed ? kleur.green : kleur.red)(kicadFile)}`
+      } ${(passed ? kleur.green : kleur.red)(kicadFile)}`,
     )
     // Logging doesn't work unless you pause every so often
     if (runCount % 20 === 0) {
@@ -44,8 +44,8 @@ test("benchmark: read_without_error", async (t) => {
   console.log(`BENCHMARK RESULTS "read_without_error"`)
   console.log(
     kleur.yellow(
-      `Score: ${((passing.length / allKicadFiles.length) * 100).toFixed(2)}%`
-    )
+      `Score: ${((passing.length / allKicadFiles.length) * 100).toFixed(2)}%`,
+    ),
   )
   console.log(kleur.green(`Passing: ${passing.length}`))
   console.log(kleur.red(`Failing: ${failing.length}`))

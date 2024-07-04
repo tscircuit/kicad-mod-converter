@@ -7,6 +7,17 @@
     "enabled": true,
     "indentStyle": "space"
   },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "all",
+      "semicolons": "asNeeded",
+      "arrowParentheses": "always",
+      "bracketSpacing": true,
+      "bracketSameLine": false
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {

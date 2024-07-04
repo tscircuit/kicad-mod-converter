@@ -14,24 +14,17 @@
     "build:cli": "tsup ./src/cli/cli.ts --dts --sourcemap",
     "cli:test-convert": "npm run cli -- convert-kicad-directory --input-dir ./kicad-footprints/Battery.pretty --output-dir ./test-output",
     "format": "biome format . --write",
-    "format:check": "biome check ."
+    "format:check": "biome format ."
   },
   "bin": {
     "kicad-mod-converter": "./dist/cli.cjs"
   },
-  "files": [
-    "dist"
-  ],
-  "keywords": [
-    "kicad",
-    "json",
-    "converter",
-    "electronics"
-  ],
+  "files": ["dist"],
+  "keywords": ["kicad", "json", "converter", "electronics"],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@biomejs/biome": "1.7.3",
+    "@biomejs/biome": "^1.8.3",
     "@tscircuit/log-soup": "^1.0.1",
     "@tscircuit/soup": "^0.0.39",
     "@types/debug": "^4.1.12",

@@ -46,8 +46,8 @@ export const convertKicadJsonToTsCircuitSoup = async (
             .setSize(pad.size[0], pad.size[1]),
         )
       } else if (pad.pad_type === "thru_hole") {
-        if(pad.pad_shape === "circle") {
-            cb.footprint.add("platedhole", (phb) =>
+        if (pad.pad_shape === "circle") {
+          cb.footprint.add("platedhole", (phb) =>
             phb.setProps({
               x: pad.at[0],
               y: -pad.at[1],
@@ -59,7 +59,7 @@ export const convertKicadJsonToTsCircuitSoup = async (
               port_hints: [pad.name],
             }),
           )
-        } else if(pad.pad_shape === "oval") {
+        } else if (pad.pad_shape === "oval") {
           cb.footprint.add("platedhole", (phb) =>
             phb.setProps({
               shape: "pill",
@@ -108,7 +108,7 @@ export const convertKicadJsonToTsCircuitSoup = async (
             ],
             layer: "top",
             pcbX: "",
-            pcbY: ""
+            pcbY: "",
           }),
         )
       } else if (fp_line.layer === "F.Fab") {
@@ -140,7 +140,7 @@ export const convertKicadJsonToTsCircuitSoup = async (
           route: arcPoints.map((p) => ({ x: p.x, y: -p.y })),
           layer: convertKicadLayerToTscircuitLayer(layer)!,
           pcbX: "",
-          pcbY: ""
+          pcbY: "",
         }),
       )
     }

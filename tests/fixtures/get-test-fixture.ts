@@ -25,7 +25,7 @@ export const getTestFixture = (t: ExecutionContext) => {
               .map((file) => join(dirent.name, file))
           }
           return []
-        }
+        },
       )
       cache.kicadFileList = files
       return files
