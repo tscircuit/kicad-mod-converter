@@ -62,7 +62,7 @@ export const convertKicadJsonToTsCircuitSoup = async (
         } else if(pad.pad_shape === "oval") {
           cb.footprint.add("platedhole", (phb) =>
             phb.setProps({
-              shape: "oval",
+              shape: "pill",
               x: pad.at[0],
               y: -pad.at[1],
               outer_width: pad.size[0],
