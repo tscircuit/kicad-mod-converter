@@ -1,6 +1,6 @@
 {
   "name": "kicad-mod-converter",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "description": "Convert kicad mod file into JSON",
   "type": "module",
   "main": "dist/index.cjs",
