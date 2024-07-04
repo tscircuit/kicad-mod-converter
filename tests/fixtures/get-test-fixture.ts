@@ -1,49 +1,49 @@
-import type { ExecutionContext } from "ava"
-import type { KicadFileName } from "./kicad-file-paths"
-import { readFileSync } from "node:fs"
-import { readdirSync } from "node:fs"
-import { join } from "node:path"
-import { logSoup } from "@tscircuit/log-soup"
-import type { AnySoupElement } from "@tscircuit/soup"
+import type { ExecutionContext } from "ava";
+import type { KicadFileName } from "./kicad-file-paths";
+import { readFileSync } from "node:fs";
+import { readdirSync } from "node:fs";
+import { join } from "node:path";
+import { logSoup } from "@tscircuit/log-soup";
+import type { AnySoupElement } from "@tscircuit/soup";
 
-const cache: any = {}
+const cache: any = {};
 
-const kicadDir = "kicad-footprints"
+const kicadDir = "kicad-footprints";
 
 export const getTestFixture = (t: ExecutionContext) => {
   return {
     getAllKicadFiles() {
-      if (cache.kicadFileList) return cache.kicadFileList as string[]
+      if (cache.kicadFileList) return cache.kicadFileList as string[];
 
       // Each kicad file is nested, i.e. kicad-footprints/*.pretty/*.kicad_mod
       const files = readdirSync(kicadDir, { withFileTypes: true }).flatMap(
         (dirent) => {
           if (dirent.isDirectory() && dirent.name.endsWith(".pretty")) {
-            const nestedDir = join(kicadDir, dirent.name)
+            const nestedDir = join(kicadDir, dirent.name);
             return readdirSync(nestedDir)
               .filter((file) => file.endsWith(".kicad_mod"))
-              .map((file) => join(dirent.name, file))
+              .map((file) => join(dirent.name, file));
           }
-          return []
-        }
-      )
-      cache.kicadFileList = files
-      return files
+          return [];
+        },
+      );
+      cache.kicadFileList = files;
+      return files;
     },
 
     getKicadFilePath(fname: KicadFileName) {
-      const files = this.getAllKicadFiles()
-      const filePath = files.find((file) => file.endsWith(fname))
-      return join(kicadDir, filePath!)
+      const files = this.getAllKicadFiles();
+      const filePath = files.find((file) => file.endsWith(fname));
+      return join(kicadDir, filePath!);
     },
 
     getKicadFile(fname: KicadFileName) {
-      return readFileSync(this.getKicadFilePath(fname), "utf-8")
+      return readFileSync(this.getKicadFilePath(fname), "utf-8");
     },
 
     logSoup: async (soup: AnySoupElement[]) => {
-      if (process.env.CI) return
-      await logSoup(`kicad-mod-converter: ${t.title}`, soup)
+      if (process.env.CI) return;
+      await logSoup(`kicad-mod-converter: ${t.title}`, soup);
     },
-  }
-}
+  };
+};

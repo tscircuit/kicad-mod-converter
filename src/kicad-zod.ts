@@ -1,10 +1,10 @@
-import { z } from "zod"
+import { z } from "zod";
 
-export const point2 = z.tuple([z.coerce.number(), z.coerce.number()])
-export const point3 = z.tuple([z.number(), z.number(), z.number()])
-export const point = z.union([point2, point3])
+export const point2 = z.tuple([z.coerce.number(), z.coerce.number()]);
+export const point3 = z.tuple([z.number(), z.number(), z.number()]);
+export const point = z.union([point2, point3]);
 
-type MakeRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
+type MakeRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
 
 export const attributes_def = z
   .object({
@@ -14,20 +14,20 @@ export const attributes_def = z
     roundrect_rratio: z.number(),
     uuid: z.string(),
   })
-  .partial()
+  .partial();
 
 export const property_def = z.object({
   key: z.string(),
   val: z.string(),
   attributes: attributes_def,
-})
+});
 
 const drill_def = z.object({
   oval: z.boolean().default(false),
   width: z.number().optional(),
   height: z.number().optional(),
   offset: point2.optional(),
-})
+});
 
 export const pad_def = z.object({
   name: z.string(),
@@ -46,16 +46,16 @@ export const pad_def = z.object({
     .union([z.number(), z.array(z.any()), drill_def])
     .transform((a) => {
       if (typeof a === "number") {
-        return { oval: false, width: a, height: a }
+        return { oval: false, width: a, height: a };
       }
-      if ("oval" in a) return a
+      if ("oval" in a) return a;
       if (a.length === 2) {
         return {
           oval: false,
           width: Number.parseFloat(a[0]),
           height: Number.parseFloat(a[0]),
           offset: point2.parse(a[1].slice(1)),
-        }
+        };
       }
       if (a.length === 3 || a.length === 4) {
         return {
@@ -63,9 +63,9 @@ export const pad_def = z.object({
           width: Number.parseFloat(a[1] as string),
           height: Number.parseFloat(a[2] as string),
           offset: a[3] ? point2.parse(a[3].slice(1)) : undefined,
-        }
+        };
       }
-      return a
+      return a;
     })
     .pipe(drill_def)
     .optional(),
@@ -85,7 +85,7 @@ export const pad_def = z.object({
   thermal_width: z.number().optional(),
   thermal_gap: z.number().optional(),
   uuid: z.string().optional(),
-})
+});
 
 export const effects_def = z
   .object({
@@ -94,7 +94,7 @@ export const effects_def = z
       thickness: z.number().optional(),
     }),
   })
-  .partial()
+  .partial();
 
 export const fp_text_def = z.object({
   fp_text_type: z.literal("user"),
@@ -103,7 +103,7 @@ export const fp_text_def = z.object({
   layer: z.string(),
   uuid: z.string().optional(),
   effects: effects_def.partial(),
-})
+});
 
 export const fp_arc_def = z.object({
   start: point2,
@@ -115,7 +115,7 @@ export const fp_arc_def = z.object({
   }),
   layer: z.string(),
   uuid: z.string().optional(),
-})
+});
 
 export const fp_line = z
   .object({
@@ -137,8 +137,8 @@ export const fp_line = z
       ...data,
       width: undefined,
       stroke: data.stroke ?? { width: data.width },
-    } as MakeRequired<Omit<typeof data, "width">, "stroke">
-  })
+    } as MakeRequired<Omit<typeof data, "width">, "stroke">;
+  });
 
 export const kicad_mod_json_def = z.object({
   footprint_name: z.string(),
@@ -153,16 +153,16 @@ export const kicad_mod_json_def = z.object({
   fp_texts: z.array(fp_text_def),
   fp_arcs: z.array(fp_arc_def),
   pads: z.array(pad_def),
-})
+});
 
-export type Point2 = z.infer<typeof point2>
-export type Point3 = z.infer<typeof point3>
-export type Point = z.infer<typeof point>
-export type Attributes = z.infer<typeof attributes_def>
-export type Property = z.infer<typeof property_def>
-export type Pad = z.infer<typeof pad_def>
-export type EffectsObj = z.infer<typeof effects_def>
-export type FpText = z.infer<typeof fp_text_def>
-export type FpLine = z.infer<typeof fp_line>
-export type FpArc = z.infer<typeof fp_arc_def>
-export type KicadModJson = z.infer<typeof kicad_mod_json_def>
+export type Point2 = z.infer<typeof point2>;
+export type Point3 = z.infer<typeof point3>;
+export type Point = z.infer<typeof point>;
+export type Attributes = z.infer<typeof attributes_def>;
+export type Property = z.infer<typeof property_def>;
+export type Pad = z.infer<typeof pad_def>;
+export type EffectsObj = z.infer<typeof effects_def>;
+export type FpText = z.infer<typeof fp_text_def>;
+export type FpLine = z.infer<typeof fp_line>;
+export type FpArc = z.infer<typeof fp_arc_def>;
+export type KicadModJson = z.infer<typeof kicad_mod_json_def>;

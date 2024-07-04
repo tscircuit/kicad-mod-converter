@@ -1,1 +1,1 @@
-export * from "./convert-kicad-directory-to-ts"
+export * from "./convert-kicad-directory-to-ts";
