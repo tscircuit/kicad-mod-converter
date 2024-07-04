@@ -12,7 +12,9 @@
     "benchmark": "DEBUG='' RUN_BENCHMARK=1 npx ava --color -T 2m ./tests/kicad-file-tests/benchmark.test.ts",
     "cli": "tsx ./src/cli/cli.ts",
     "build:cli": "tsup ./src/cli/cli.ts --dts --sourcemap",
-    "cli:test-convert": "npm run cli -- convert-kicad-directory --input-dir ./kicad-footprints/Battery.pretty --output-dir ./test-output"
+    "cli:test-convert": "npm run cli -- convert-kicad-directory --input-dir ./kicad-footprints/Battery.pretty --output-dir ./test-output",
+    "format": "biome format . --write",
+    "format:check": "biome check ."
   },
   "bin": {
     "kicad-mod-converter": "./dist/cli.cjs"
