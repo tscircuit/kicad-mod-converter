@@ -1,22 +1,22 @@
 #!/usr/bin/env node
-import { perfectCli } from "perfect-cli";
-import { program } from "commander";
-import { convertKicadDirectoryToTs } from "./cmds";
-import { PARAM_HANDLERS_BY_PARAM_NAME } from "./param-handlers";
-import type { ParamHandler } from "./param-handlers/param-handler-type";
+import { perfectCli } from "perfect-cli"
+import { program } from "commander"
+import { convertKicadDirectoryToTs } from "./cmds"
+import { PARAM_HANDLERS_BY_PARAM_NAME } from "./param-handlers"
+import type { ParamHandler } from "./param-handlers/param-handler-type"
 
-program.name("kicad-mod-converter");
+program.name("kicad-mod-converter")
 
 program
   .command("convert-kicad-directory")
   .requiredOption("--input-dir <input>", "Input directory")
   .requiredOption("--output-dir <output>", "Output directory")
-  .action((opts) => convertKicadDirectoryToTs(opts));
+  .action((opts) => convertKicadDirectoryToTs(opts))
 
 perfectCli(program, process.argv, {
   async customParamHandler({ commandPath, optionName }, { prompts }) {
     const optionNameHandler: ParamHandler | undefined =
-      PARAM_HANDLERS_BY_PARAM_NAME[optionName.replace(/-/g, "_")];
+      PARAM_HANDLERS_BY_PARAM_NAME[optionName.replace(/-/g, "_")]
 
     if (optionNameHandler) {
       return optionNameHandler({
@@ -24,7 +24,7 @@ perfectCli(program, process.argv, {
         optionName,
         prompts,
         ctx: undefined,
-      });
+      })
     }
   },
-});
+})

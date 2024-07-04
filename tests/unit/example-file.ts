@@ -81,4 +81,4 @@ export const exampleFile = `
 		(roundrect_rratio 0.25)
 		(uuid "00000000-0000-0000-0000-000000000000")
 	)
-)`;
+)`

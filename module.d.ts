@@ -1,1 +1,1 @@
-declare module "s-expression";
+declare module "s-expression"

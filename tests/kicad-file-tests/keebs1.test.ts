@@ -1,6 +1,6 @@
-import test from "ava";
-import { parseKicadModToTscircuitSoup } from "src";
-import { getTestFixture } from "tests/fixtures/get-test-fixture";
+import test from "ava"
+import { parseKicadModToTscircuitSoup } from "src"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 const fileContent = `
 (module Mx_Alps_100 (layer F.Cu) (tedit 5F25CCD9)
@@ -16,13 +16,13 @@ const fileContent = `
   (pad "" np_thru_hole circle (at 0 0) (size 3.9878 3.9878) (drill 3.9878) (layers *.Cu *.Mask))
   (pad 1 thru_hole oval (at -3.255 -3.52 327.5) (size 2.5 4.75) (drill oval 1.5 3.75) (layers *.Cu *.Mask F.SilkS))
 )
-`;
+`
 
 test("keebs1", async (t) => {
-  const fixture = await getTestFixture(t);
+  const fixture = await getTestFixture(t)
 
-  const soup = await parseKicadModToTscircuitSoup(fileContent);
+  const soup = await parseKicadModToTscircuitSoup(fileContent)
 
-  await fixture.logSoup(soup);
-  t.pass();
-});
+  await fixture.logSoup(soup)
+  t.pass()
+})

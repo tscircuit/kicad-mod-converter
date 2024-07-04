@@ -6430,6 +6430,6 @@ export const kicadFilePaths = [
   "TerminalBlock_Dinkle_DT-55-B01X-18_P10.00mm.kicad_mod",
   "TerminalBlock_Dinkle_DT-55-B01X-23_P10.00mm.kicad_mod",
   "Heatsink_AAVID_576802B03900G.kicad_mod",
-] as const;
+] as const
 
-export type KicadFileName = (typeof kicadFilePaths)[number];
+export type KicadFileName = (typeof kicadFilePaths)[number]
