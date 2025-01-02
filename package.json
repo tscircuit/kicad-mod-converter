@@ -1,7 +1,7 @@
 {
-  "name": "kicad-mod-converter",
+  "name": "kicad-component-converter",
   "version": "0.0.30",
-  "description": "Convert kicad mod file into JSON",
+  "description": "Convert kicad_mod or kicad_sym file into Circuit JSON or tscircuit",
   "type": "module",
   "main": "dist/index.cjs",
   "scripts": {
@@ -44,6 +44,7 @@
   "dependencies": {
     "@tscircuit/builder": "^1.5.116",
     "@tscircuit/props": "^0.0.124",
+    "circuit-json": "^0.0.126",
     "prettier": "^3.3.1",
     "s-expression": "^3.1.1",
     "zod": "^3.23.8"

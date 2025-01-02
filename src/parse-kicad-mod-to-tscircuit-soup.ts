@@ -1,12 +1,12 @@
-import type { AnySoupElement } from "@tscircuit/soup"
+import type { AnyCircuitElement } from "@tscircuit/soup"
 import { parseKicadModToKicadJson } from "./parse-kicad-mod-to-kicad-json"
-import { convertKicadJsonToTsCircuitSoup } from "./convert-kicad-json-to-tscircuit-soup"
+import { convertKicadJsonToTsCircuitSoup as convertKicadJsonToCircuitJson } from "./convert-kicad-json-to-tscircuit-soup"
 
-export const parseKicadModToTscircuitSoup = async (
+export const parseKicadModToCircuitJson = async (
   kicadMod: string,
-): Promise<AnySoupElement[]> => {
+): Promise<AnyCircuitElement[]> => {
   const kicadJson = parseKicadModToKicadJson(kicadMod)
 
-  const soup = await convertKicadJsonToTsCircuitSoup(kicadJson)
-  return soup
+  const circuitJson = await convertKicadJsonToCircuitJson(kicadJson)
+  return circuitJson
 }

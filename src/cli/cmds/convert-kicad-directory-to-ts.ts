@@ -1,4 +1,4 @@
-import { parseKicadModToTscircuitSoup } from "src/parse-kicad-mod-to-tscircuit-soup"
+import { parseKicadModToCircuitJson } from "src/parse-kicad-mod-to-tscircuit-soup"
 import {
   readFileSync,
   readdirSync,
@@ -20,7 +20,7 @@ async function getTsFileContentFromKicadModFile(kicadModFilePath: string) {
   const kicadModFileContent = readFileSync(kicadModFilePath, "utf-8")
   const fileNameWoExt = kicadModFilePath.split("/").pop()?.split(".")[0]
 
-  const tsCircuitSoup = await parseKicadModToTscircuitSoup(kicadModFileContent)
+  const tsCircuitSoup = await parseKicadModToCircuitJson(kicadModFileContent)
 
   const varName = normalizeFileNameToVarName(fileNameWoExt!)
 

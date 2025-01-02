@@ -1,6 +1,6 @@
-# kicad-mod-converter
+# kicad-component-converter
 
-This module converts kicad files into a [tscircuit soup json](https://docs.tscircuit.com/quickstart), an easy-to-use JSON format for electronics.
+This module converts kicad files into a [circuit json](https://github.com/tscircuit/circuit-json), an easy-to-use JSON format for electronics or [tscircuit code](https://github.com/tscircuit/tscircuit).
 
 1. [Library Usage](#library-usage)
 2. [CLI Usage](#cli-usage)
@@ -8,11 +8,11 @@ This module converts kicad files into a [tscircuit soup json](https://docs.tscir
 ## Library Usage
 
 ```bash
-npm add kicad-mod-converter
+npm add kicad-component-converter
 ```
 
 ```ts
-import { parseKicadModToTscircuitSoup } from "kicad-mod-converter"
+import { parseKicadModToTscircuitSoup } from "kicad-component-converter"
 import { readFileSync } from "node:fs"
 
 const fileContent = readFileSync("SW_SP3T_PCM13.kicad_mod")
@@ -30,8 +30,9 @@ You can also output "kicad json", an intermediary JSON format that more closely 
 ```ts
 import { parseKicadModToKicadJson } from "kicad-mod-converter"
 
-
-const kicadJson = parseKicadModToKicadJson(readFileSync("SW_SP3T_PCM13.kicad_mod"))
+const kicadJson = parseKicadModToKicadJson(
+  readFileSync("SW_SP3T_PCM13.kicad_mod")
+)
 /*
  * {
  *    footprint_name: "...",
