@@ -3,14 +3,12 @@ import type { KicadFileName } from "./kicad-file-paths"
 import { readFileSync } from "node:fs"
 import { readdirSync } from "node:fs"
 import { join } from "node:path"
-import { logSoup } from "@tscircuit/log-soup"
-import type { AnySoupElement } from "@tscircuit/soup"
 
 const cache: any = {}
 
 const kicadDir = "kicad-footprints"
 
-export const getTestFixture = (t: ExecutionContext) => {
+export const getTestFixture = () => {
   return {
     getAllKicadFiles() {
       if (cache.kicadFileList) return cache.kicadFileList as string[]
@@ -39,11 +37,6 @@ export const getTestFixture = (t: ExecutionContext) => {
 
     getKicadFile(fname: KicadFileName) {
       return readFileSync(this.getKicadFilePath(fname), "utf-8")
-    },
-
-    logSoup: async (soup: AnySoupElement[]) => {
-      if (process.env.CI) return
-      await logSoup(`kicad-mod-converter: ${t.title}`, soup)
     },
   }
 }

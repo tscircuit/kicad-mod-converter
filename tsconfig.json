@@ -18,7 +18,12 @@
     // We are not transpiling, so preserve our source code and do not emit files
     "module": "ESNext",
     "noEmit": true,
-    "lib": ["ESNext"]
+    "lib": ["ESNext", "DOM"],
+    "jsx": "react-jsx",
+
+    "paths": {
+      "src/*": ["src/*"]
+    }
   },
   // Include the necessary files for your project
   "include": ["**/*.ts", "**/*.tsx"],
