@@ -1,104 +1,152 @@
+import { useCallback, useState } from "react"
+import { useStore } from "./use-store"
+import { FileSearch } from "lucide-react"
+import { parseKicadModToCircuitJson } from "src/parse-kicad-mod-to-circuit-json"
+import { CircuitJsonPreview } from "@tscircuit/runframe"
+
 export const App = () => {
-  const isKicadModUploaded = false
+  const [error, setError] = useState<string | null>(null)
+  const filesAdded = useStore((s) => s.filesAdded)
+  const addFile = useStore((s) => s.addFile)
+  const updateCircuitJson = useStore((s) => s.updateCircuitJson)
+  const circuitJson = useStore((s) => s.circuitJson)
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  const handleProcessAndViewFiles = useCallback(async () => {
+    if (!filesAdded.kicad_mod) {
+      setError("No KiCad Mod file added")
+      return
+    }
+    setError(null)
+    try {
+      const circuitJson = await parseKicadModToCircuitJson(filesAdded.kicad_mod)
+      updateCircuitJson(circuitJson as any)
+    } catch (err: any) {
+      setError(`Error parsing KiCad Mod file: ${err.toString()}`)
+    }
+  }, [filesAdded])
+
+  const addDroppedFile = useCallback(
+    (fileName: string, file: string) => {
+      setError(null)
+      if (fileName.endsWith(".kicad_mod")) {
+        addFile("kicad_mod", file)
+      } else if (fileName.endsWith(".kicad_sym")) {
+        addFile("kicad_sym", file)
+      } else {
+        setError("Unsupported file type")
+      }
+    },
+    [addFile],
+  )
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      // biome-ignore lint/complexity/noForEach: <explanation>
+      Array.from(e.dataTransfer.files).forEach((file) => {
+        const reader = new FileReader()
+        reader.onload = (e) =>
+          addDroppedFile(file.name, e.target?.result as string)
+        reader.readAsText(file)
+      })
+    },
+    [addDroppedFile],
+  )
+
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent) => {
+      const content = e.clipboardData.getData("text")
+      if (!content) return
+      if (content.trim().startsWith("(footprint")) {
+        addDroppedFile("kicad_mod", content)
+      } else if (content.trim().startsWith("(symbol")) {
+        addDroppedFile("kicad_sym", content)
+      } else {
+        setError("Unsupported file type (file an issue if we're wrong)")
+      }
+    },
+    [addDroppedFile],
+  )
 
   return (
-    <>
-      <div
-        className="min-h-screen bg-gray-900 text-white p-4"
-        // onDrop={handleDrop}
-        // onDragOver={(e) => e.preventDefault()}
-        // onPaste={handlePaste}
-        // biome-ignore lint/a11y/noNoninteractiveTabindex: we need this for drag and drop
-        tabIndex={0}
-      >
-                <div className="space-y-4">
-                  <p className="text-gray-400 mb-2">
-                    Drag and drop or paste both required files:
-                  </p>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 bg-gray-800/50 p-3 rounded-md">
-                      <span
-                        className={
-                          isKicadModUploaded
-                            ? "text-green-500"
-                            : "text-red-500"
-                        }
-                      >
-                        {isKicadModUploaded ? "✅" : "❌"}
-                      </span>
-                      <span className="text-gray-300">Session File</span>
-                    </div>
-                    <div className="flex items-center gap-2 bg-gray-800/50 p-3 rounded-md">
-                      <span
-                        className={
-                          isKicadModUploaded
-                            ? "text-green-500"
-                            : "text-red-500"
-                        }
-                      >
-                        {isKicadModUploaded ? "✅" : "❌"}
-                      </span>
-                      <span className="text-gray-300">Kicad Mod File</span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <p className="text-gray-400 mb-2">
-                    Drag and drop a DSN file here
-                  </p>
-                  <p className="text-gray-400">
-                    or paste DSN content with Ctrl/CMD+V
-                  </p>
-                  <div className="flex gap-4 justify-center mt-6">
-                    <button
-                      className="underline hover:text-blue-400"
-                      onClick={() => {
-                        // fetch("/exampledsn.dsn")
-                        //   .then((response) => response.text())
-                        //   .then(processFile)
-                        //   .catch(() =>
-                        //     setError("Failed to load example DSN file."),
-                        //   )
-                      }}
-                    >
-                      open example
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="text-gray-400 text-sm mt-16">
-              KiCad Component Viewer and Converter
-              <a
-                className="underline hover:text-blue-400"
-                href="https://github.com/tscircuit/tscircuit"
-              >
-                tscircuit
-              </a>
-              , get the{" "}
-              <a
-                className="underline"
-                href="https://github.com/tscircuit/kicad-component-converter"
-              >
-                source code here
-              </a>
-              .
-            </div>
-            <a className="mt-4" href="https://github.com/tscircuit/tscircuit">
-              <img
-                src="https://img.shields.io/github/stars/tscircuit/kicad-component-converter?style=social"
-                alt="GitHub stars"
-              />
-            </a>
+    <div
+      className="min-h-screen flex items-center justify-center bg-gray-900 text-white p-4"
+      onDrop={handleDrop}
+      onDragOver={(e) => e.preventDefault()}
+      onPaste={handlePaste}
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: we need this for drag and drop
+      tabIndex={0}
+    >
+      <div className="flex flex-col text-center">
+        <h1 className="text-3xl font-bold mb-8">
+          KiCad Component Viewer & Converter
+        </h1>
+        <div className="space-y-4">
+          <div className="mb-4">
+            {error && (
+              <div className="bg-red-500/20 border border-red-500 text-red-500 p-3 rounded-md">
+                {error}
+              </div>
+            )}
           </div>
-        )}
+          <p className="text-gray-400 mb-2">
+            Drag and drop files to view or convert:
+          </p>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 bg-gray-800/50 p-3 rounded-md">
+              <span
+                className={
+                  filesAdded.kicad_mod ? "text-green-500" : "text-red-500"
+                }
+              >
+                {filesAdded.kicad_mod ? "✅" : "❌"}
+              </span>
+              <span className="text-gray-300">KiCad Mod File</span>
+            </div>
+          </div>
+          {!circuitJson && (
+            <button
+              type="button"
+              className="bg-blue-500 inline-flex items-center text-white p-2 rounded-md"
+              onClick={handleProcessAndViewFiles}
+            >
+              <span>Process & View</span>
+              <FileSearch className="w-4 h-4 ml-2" />
+            </button>
+          )}
+          {circuitJson && <CircuitJsonPreview circuitJson={circuitJson} />}
+        </div>
+
+        <div className="text-gray-400 text-sm mt-16">
+          KiCad Component Viewer and Converter{" "}
+          <a
+            className="underline hover:text-blue-400"
+            href="https://github.com/tscircuit/tscircuit"
+          >
+            by tscircuit
+          </a>
+          , get the{" "}
+          <a
+            className="underline"
+            href="https://github.com/tscircuit/kicad-component-converter"
+          >
+            source code here
+          </a>
+          .
+        </div>
+        <div className="flex justify-center">
+          <a
+            className="mt-4"
+            href="https://github.com/tscircuit/kicad-component-converter"
+          >
+            <img
+              src="https://img.shields.io/github/stars/tscircuit/kicad-component-converter?style=social"
+              alt="GitHub stars"
+            />
+          </a>
+        </div>
       </div>
-      <link
-        href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-        rel="stylesheet"
-      />
-    </>
+    </div>
   )
 }
