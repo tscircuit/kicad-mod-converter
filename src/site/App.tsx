@@ -54,21 +54,15 @@ export const App = () => {
                     <button
                       className="underline hover:text-blue-400"
                       onClick={() => {
-                        fetch("/exampledsn.dsn")
-                          .then((response) => response.text())
-                          .then(processFile)
-                          .catch(() =>
-                            setError("Failed to load example DSN file."),
-                          )
+                        // fetch("/exampledsn.dsn")
+                        //   .then((response) => response.text())
+                        //   .then(processFile)
+                        //   .catch(() =>
+                        //     setError("Failed to load example DSN file."),
+                        //   )
                       }}
                     >
                       open example
-                    </button>
-                    <button
-                      className="underline hover:text-blue-400"
-                      onClick={() => setInDsnSessionMode(true)}
-                    >
-                      upload session
                     </button>
                   </div>
                 </>
@@ -76,7 +70,7 @@ export const App = () => {
             </div>
 
             <div className="text-gray-400 text-sm mt-16">
-              Unofficial Specctra DSN Parser/Viewer created by{" "}
+              KiCad Component Viewer and Converter
               <a
                 className="underline hover:text-blue-400"
                 href="https://github.com/tscircuit/tscircuit"
@@ -86,7 +80,7 @@ export const App = () => {
               , get the{" "}
               <a
                 className="underline"
-                href="https://github.com/tscircuit/dsn-viewer"
+                href="https://github.com/tscircuit/kicad-component-converter"
               >
                 source code here
               </a>
@@ -94,7 +88,7 @@ export const App = () => {
             </div>
             <a className="mt-4" href="https://github.com/tscircuit/tscircuit">
               <img
-                src="https://img.shields.io/github/stars/tscircuit/tscircuit?style=social"
+                src="https://img.shields.io/github/stars/tscircuit/kicad-component-converter?style=social"
                 alt="GitHub stars"
               />
             </a>
