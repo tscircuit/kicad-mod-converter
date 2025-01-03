@@ -59,13 +59,13 @@
     "tsup": "^8.0.2",
     "tsx": "^4.15.1",
     "vite": "^6.0.7",
-    "vite-tsconfig-paths": "^5.1.4"
-  },
-  "dependencies": {
+    "vite-tsconfig-paths": "^5.1.4",
     "@tscircuit/builder": "^1.5.116",
-    "@tscircuit/props": "^0.0.124",
     "circuit-json": "^0.0.126",
     "lucide-react": "^0.469.0",
+    "@tscircuit/props": "^0.0.125",
+  },
+  "dependencies": {
     "prettier": "^3.3.1",
     "s-expression": "^3.1.1",
     "zod": "^3.23.8",
