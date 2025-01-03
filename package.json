@@ -14,7 +14,8 @@
     "build:cli": "tsup ./src/cli/cli.ts --dts --sourcemap",
     "cli:test-convert": "npm run cli -- convert-kicad-directory --input-dir ./kicad-footprints/Battery.pretty --output-dir ./test-output",
     "format": "biome format . --write",
-    "format:check": "biome format ."
+    "format:check": "biome format .",
+    "start": "vite"
   },
   "bin": {
     "kicad-mod-converter": "./dist/cli.cjs"
@@ -38,6 +39,8 @@
     "@types/debug": "^4.1.12",
     "@types/node": "^20.14.2",
     "@types/prompts": "^2.4.9",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
     "ava": "^6.1.3",
     "bun-match-svg": "^0.0.8",
     "circuit-to-svg": "^0.0.99",
@@ -48,8 +51,11 @@
     "kleur": "^4.1.5",
     "perfect-cli": "^1.0.20",
     "prompts": "^2.4.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "tsup": "^8.0.2",
-    "tsx": "^4.15.1"
+    "tsx": "^4.15.1",
+    "vite": "^6.0.7"
   },
   "dependencies": {
     "@tscircuit/builder": "^1.5.116",
